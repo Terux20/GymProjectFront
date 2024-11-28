@@ -1,0 +1,15 @@
+<h2 mat-dialog-title>Ürün Güncelle</h2>
+<form [formGroup]="updateForm" (ngSubmit)="onSubmit()">
+  <mat-dialog-content>
+    <mat-form-field>
+      <input matInput placeholder="Ürün Adı" formControlName="name">
+    </mat-form-field>
+    <mat-form-field>
+      <input matInput type="number" placeholder="Fiyat" formControlName="price">
+    </mat-form-field>
+  </mat-dialog-content>
+  <mat-dialog-actions>
+    <button mat-button type="button" (click)="onNoClick()">İptal</button>
+    <button mat-button type="submit" [disabled]="!updateForm.valid">Güncelle</button>
+  </mat-dialog-actions>
+</form>

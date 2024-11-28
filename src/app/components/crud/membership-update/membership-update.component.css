@@ -1,0 +1,23 @@
+.update-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.form-column {
+  flex: 1;
+  margin-right: 10px;
+}
+
+.form-column:last-child {
+  margin-right: 0;
+}
+
+mat-form-field {
+  width: 100%;
+}

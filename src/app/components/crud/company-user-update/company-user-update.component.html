@@ -1,0 +1,37 @@
+<h2 mat-dialog-title>Şirket Kullanıcısı Güncelle</h2>
+<mat-dialog-content>
+  <form [formGroup]="updateForm">
+    <mat-form-field>
+      <mat-label>Ad Soyad</mat-label>
+      <input matInput formControlName="name">
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>İl</mat-label>
+      <mat-select formControlName="cityID" (selectionChange)="onCityChange()">
+        <mat-option *ngFor="let city of cities" [value]="city.cityID">
+          {{city.cityName}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>İlçe</mat-label>
+      <mat-select formControlName="townID">
+        <mat-option *ngFor="let town of towns" [value]="town.townID">
+          {{town.townName}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>Telefon Numarası</mat-label>
+      <input matInput formControlName="phoneNumber">
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>E-posta</mat-label>
+      <input matInput formControlName="email">
+    </mat-form-field>
+  </form>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button mat-button (click)="onNoClick()">İptal</button>
+  <button mat-button [disabled]="!updateForm.valid" (click)="onSubmit()">Güncelle</button>
+</mat-dialog-actions>

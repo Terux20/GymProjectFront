@@ -1,0 +1,195 @@
+.gym-container {
+  max-width: 100%;
+  margin: auto;
+  padding: 20px;
+  background: linear-gradient(135deg, #3498db, #8e44ad);
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: 'Arial', sans-serif;
+}
+
+.gym-panel {
+  width: 100%;
+  max-width: 320px;
+  background-color: #ffffff;
+  border-radius: 20px;
+  padding: 25px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+  display: flex;
+  flex-direction: column;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.gym-icon {
+  font-size: 40px;
+}
+
+.input-area {
+  margin-bottom: 15px;
+  display: flex;
+}
+
+.input-area input {
+  flex-grow: 1;
+  padding: 12px;
+  border: 1px solid #bdc3c7;
+  border-radius: 25px;
+  font-size: 15px;
+  outline: none;
+  transition: border-color 0.3s;
+}
+
+.input-area input:focus {
+  border-color: #3498db;
+}
+
+.input-area button {
+  padding: 12px 18px;
+  background-color: #3498db;
+  color: white;
+  border: none;
+  border-radius: 25px;
+  font-size: 15px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  margin-left: 10px;
+}
+
+.input-area button:hover {
+  background-color: #2980b9;
+}
+
+.input-area button:disabled {
+  background-color: #bdc3c7;
+  cursor: not-allowed;
+}
+
+.message-area {
+  padding: 10px;
+  margin-bottom: 15px;
+  border-radius: 5px;
+  font-size: 14px;
+  text-align: center;
+}
+
+.message-area.error {
+  background-color: #ffebee;
+  color: #c62828;
+}
+
+.result-area {
+  text-align: center;
+  
+}
+
+.result-area h2 {
+  margin: 0 0 10px;
+  font-size: 22px;
+  color: #2c3e50;
+}
+
+.result-area p {
+  margin: 5px 0;
+  font-size: 16px;
+}
+
+.remaining-days {
+  color: #27ae60;
+  font-weight: bold;
+}
+
+.expired {
+  color: #e74c3c;
+  font-weight: bold;
+}
+
+.membership-status {
+  color: #3498db;
+  font-style: italic;
+}
+
+.qr-code-container {
+  display: flex;
+  justify-content: center;
+  margin: 20px 0;
+}
+
+.qr-code-container qrcode {
+  border: 2px solid #3498db;
+  border-radius: 10px;
+  padding: 10px;
+  background-color: #ffffff;
+}
+
+.download-button {
+  width: 100%;
+  padding: 12px 20px;
+  background-color: #27ae60;
+  color: white;
+  border: none;
+  border-radius: 25px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.download-button:hover {
+  background-color: #219150;
+}
+
+@media (max-width: 480px) {
+  .gym-container {
+    padding: 10px;
+  }
+  
+  .gym-panel {
+    border-radius: 15px;
+    padding: 20px;
+  }
+  
+  .input-area input,
+  .input-area button {
+    font-size: 14px;
+    padding: 10px;
+  }
+  
+  .result-area h2 {
+    font-size: 20px;
+    
+  }
+  
+  .result-area p {
+    font-size: 14px;
+  }
+  
+  .download-button {
+    font-size: 14px;
+    padding: 10px;
+  }
+}
+
+@media (max-height: 600px) {
+  .gym-panel {
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+}
+
+.future-membership {
+  color: #e67e22;
+  font-weight: bold;
+}
+
+
+.expired-membership {
+  color: #ff0000;
+  font-weight: bold;
+}

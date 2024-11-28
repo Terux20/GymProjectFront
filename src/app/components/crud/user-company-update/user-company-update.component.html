@@ -1,0 +1,25 @@
+<h2 mat-dialog-title>Kullanıcı-Şirket İlişkisini Güncelle</h2>
+<mat-dialog-content>
+  <form [formGroup]="updateForm">
+    <mat-form-field>
+      <mat-label>Şirket Sahibi</mat-label>
+      <mat-select formControlName="userID">
+        <mat-option *ngFor="let user of companyUsers" [value]="user.companyUserID">
+          {{user.name}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>Şirket</mat-label>
+      <mat-select formControlName="companyId">
+        <mat-option *ngFor="let company of companies" [value]="company.companyID">
+          {{company.companyName}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+  </form>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button mat-button (click)="onNoClick()">İptal</button>
+  <button mat-button [disabled]="!updateForm.valid" (click)="onSubmit()">Güncelle</button>
+</mat-dialog-actions>

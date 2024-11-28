@@ -1,0 +1,29 @@
+<table class="table table-striped table-hover">
+  <thead class="thead-dark">
+    <tr>
+      <th>Branş</th>
+      <th>Tür</th>
+      <th>Süre</th>
+      <th>Fiyat</th>
+      <th>İşlem</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let membershiptype of membershipTypes">
+      <td>{{ membershiptype.branch }}</td>
+      <td>{{ membershiptype.typeName }}</td>
+      <td>{{ getDayDisplay(membershiptype.day) }}</td>
+      <td>{{ membershiptype.price }}</td>
+      <td>
+        <div class="d-flex justify-content-around">
+          <button type="button" class="btn btn-outline-danger btn-sm" (click)="deleteMembershipType(membershiptype)">
+            <fa-icon [icon]="faTrashAlt" class="mr-1"></fa-icon> Sil
+          </button>
+          <button type="button" class="btn btn-outline-primary btn-sm" (click)="openUpdateDialog(membershiptype)">
+            <fa-icon [icon]="faEdit" class="mr-1"></fa-icon> Güncelle
+          </button>
+        </div>
+      </td>
+    </tr>
+  </tbody>
+</table>

@@ -1,0 +1,12 @@
+.table thead th {
+  background-color: #5680aa;
+  color: #fff;
+}
+
+.table td, .table th {
+  vertical-align: middle;
+}
+
+.table .btn {
+  width: 100px;
+}

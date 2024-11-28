@@ -1,0 +1,187 @@
+<nav class="navbar navbar-expand-lg">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="#">
+      <i class="fas fa-dumbbell me-2"></i>Spor Salonu
+    </a>
+    <button
+      class="navbar-toggler"
+      type="button"
+      data-bs-toggle="collapse"
+      data-bs-target="#navbarScroll"
+      aria-controls="navbarScroll"
+      aria-expanded="false"
+      aria-label="Toggle navigation"
+    >
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarScroll">
+      <ul class="navbar-nav ms-auto my-2 my-lg-0 navbar-nav-scroll">
+        <li class="nav-item dropdown" *ngIf="isAuthenticated()">
+          <a
+            class="nav-link dropdown-toggle"
+            href="#"
+            id="customerDropdown"
+            role="button"
+            data-bs-toggle="dropdown"
+            aria-expanded="false"
+          >
+            <i class="fas fa-users me-1"></i> Müşteri
+          </a>
+          <ul
+            class="dropdown-menu dropdown-menu-end"
+            aria-labelledby="customerDropdown"
+          >
+            <li>
+              <a class="dropdown-item" routerLink="allmembers">
+                <i class="fas fa-list me-2"></i>Bütün Üyeler
+              </a>
+            </li>
+            <li>
+              <a class="dropdown-item" routerLink="memberfilter">
+                <i class="fas fa-user-check me-2"></i>Aktif Üyeler
+              </a>
+            </li>
+            <li>
+              <a class="dropdown-item" routerLink="memberremainingday">
+                <i class="fas fa-hourglass-end me-2"></i>Üyelik Bitişi
+                Yaklaşanlar
+              </a>
+            </li>
+            <li>
+              <a class="dropdown-item" routerLink="debtormember">
+                <i class="fas fa-hourglass-end me-2"></i>Borçlu Üyeler
+              </a>
+            </li>
+            <li>
+              <a class="dropdown-item" routerLink="todayentries">
+                <i class="fas fa-hourglass-end me-2"></i>Bugün Gelen Üyeler
+              </a>
+            </li>
+            <li>
+              <a class="dropdown-item" routerLink="paymenthistory">
+                <i class="fas fa-cash-register me-2"></i>Kasa Raporu
+              </a>
+            </li>
+            <li>
+              <a class="dropdown-item" routerLink="memberentryexithistory">
+                <i class="fas fa-door-open me-2"></i>Salondaki Üyeler
+              </a>
+            </li>
+            <li>
+              <a class="dropdown-item" routerLink="membershiptype/add">
+                <i class="fas fa-plus-circle me-2"></i>Üyelik Türü Ekleme
+              </a>
+            </li>
+            <li>
+              <a class="dropdown-item" routerLink="member/add">
+                <i class="fas fa-user-plus me-2"></i>Yeni Üye
+              </a>
+            </li>
+            <li>
+              <a class="dropdown-item" routerLink="membership/add">
+                <i class="fas fa-clock me-2"></i>Üyelik Süresi Ekleme Paneli
+              </a>
+            </li>
+          </ul>
+        </li>
+
+        <li class="nav-item dropdown" *ngIf="isAuthenticated()">
+          <a
+            class="nav-link dropdown-toggle"
+            href="#"
+            id="customerDropdown"
+            role="button"
+            data-bs-toggle="dropdown"
+            aria-expanded="false"
+          >
+            <i class="fas fa-users me-1"></i>E-Para
+          </a>
+          <ul
+            class="dropdown-menu dropdown-menu-end"
+            aria-labelledby="customerDropdown"
+          >
+          <li>
+            <a class="dropdown-item" routerLink="memberbalancetopup">
+              <i class="fas fa-clock me-2"></i>Bakiye Yükle - Düşür
+            </a>
+          </li>
+          <li>
+            <a class="dropdown-item" routerLink="products">
+              <i class="fas fa-clock me-2"></i>Ürün Ekle
+            </a>
+          </li>
+          <li>
+            <a class="dropdown-item" routerLink="product-sale">
+              <i class="fas fa-clock me-2"></i>Ürün Satışı
+            </a>
+          </li>
+          <li>
+            <a class="dropdown-item" routerLink="transactions">
+              <i class="fas fa-clock me-2"></i>İşlem Geçmişi
+            </a>
+          </li>
+          </ul>
+        </li>
+
+        <li class="nav-item dropdown" *ngIf="isOwner">
+          <a
+            class="nav-link dropdown-toggle"
+            href="#"
+            id="gymDropdown"
+            role="button"
+            data-bs-toggle="dropdown"
+            aria-expanded="false"
+          >
+            <i class="fas fa-dumbbell me-1"></i> Spor Salonu
+          </a>
+          <ul
+            class="dropdown-menu dropdown-menu-end"
+            aria-labelledby="gymDropdown"
+          >
+            <li>
+              <a class="dropdown-item" routerLink="companyuserdetails">
+                <i class="fas fa-id-card me-2"></i>Şirket Sahibi Bilgileri
+              </a>
+            </li>
+            <li>
+              <a class="dropdown-item" routerLink="company/add">
+                <i class="fas fa-building me-2"></i>Şirket Ekleme
+              </a>
+            </li>
+            <li>
+              <a class="dropdown-item" routerLink="companyadress/add">
+                <i class="fas fa-map-marker-alt me-2"></i>Şirket Adresi Ekleme
+              </a>
+            </li>
+            <li>
+              <a class="dropdown-item" routerLink="companyuser/add">
+                <i class="fas fa-user-tie me-2"></i>Şirket Sahibi Ekleme
+              </a>
+            </li>
+            <li>
+              <a class="dropdown-item" routerLink="usercompany/add">
+                <i class="fas fa-link me-2"></i>Şirket Sahibi ile Şirket
+                Bağlantısı Kurma
+              </a>
+            </li>
+            <li>
+              <a class="dropdown-item" routerLink="roles">
+                <i class="fas fa-link me-2"></i>Rol Ekle
+              </a>
+            </li> <li>
+              <a class="dropdown-item" routerLink="user-roles">
+                <i class="fas fa-link me-2"></i>Kullanıcı Rolleri
+              </a>
+            </li>
+          </ul>
+        </li>
+        <li class="nav-item" *ngIf="isAuthenticated()">
+          <a class="nav-link" href="#" (click)="logout()">
+            <i class="fas fa-sign-out-alt me-1"></i> Çıkış Yap
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>

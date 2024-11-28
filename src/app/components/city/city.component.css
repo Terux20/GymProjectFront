@@ -1,0 +1,72 @@
+/* .container {
+  position: relative;
+  max-width: 500px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.ant-select-search__field {
+  width: calc(100% - 3px);
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px 4px 0 0;
+  box-sizing: border-box;
+  font-size: 16px;
+}
+
+.ant-select-search__field:focus {
+  outline: none;
+  border-color: #40a9ff;
+  box-shadow: 0 0 8px rgba(24, 144, 255, 0.2);
+}
+
+.list-group {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+  position: absolute;
+  width: calc(100% - 2px);
+  max-height: 200px;
+  overflow-y: auto;
+  border: 1px solid #ccc;
+  border-top: none;
+  z-index: 1000;
+  background-color: white;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 0 0 4px 4px;
+  display: none;
+}
+
+.list-group.visible {
+  display: block;
+}
+
+
+.list-group::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+}
+
+.list-group-item {
+  padding: 10px 15px;
+  border-bottom: 1px solid #ddd;
+  cursor: pointer;
+}
+
+.list-group-item:last-child {
+  border-bottom: none;
+}
+
+.list-group-item:hover {
+  background-color: #f5f5f5;
+}
+
+.list-group-item-action {
+  transition: background-color 0.2s ease-in-out;
+}
+
+.list-group-item.active {
+  background-color: #007bff;
+  color: white;
+  border-color: #007bff;
+}  */

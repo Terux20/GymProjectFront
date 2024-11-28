@@ -1,0 +1,22 @@
+<table class="table">
+  <thead>
+    <tr>
+      <th>Id</th>
+      <th>Adı</th>
+      <th>Telefon</th>
+      <th>Şehir id</th>
+      <th>İlçe id</th>
+      <th>E Posta</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let companyuser of companyUsers">
+      <td>{{ companyuser.companyUserID }}</td>
+      <td>{{ companyuser.name }}</td>
+      <td>{{ companyuser.phoneNumber }}</td>
+      <td>{{ companyuser.cityID }}</td>
+      <td>{{ companyuser.townID }}</td>
+      <td>{{ companyuser.email }}</td>
+    </tr>
+  </tbody>
+</table>

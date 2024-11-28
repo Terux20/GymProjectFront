@@ -1,0 +1,24 @@
+<div class="container">
+  <input
+    type="text"
+    [(ngModel)]="searchTerm"
+    class="form-control mt-3"
+    placeholder="Şehir Ara"
+    (input)="filterCities()"
+  />
+  <ul class="list-group mt-3">
+    <li [class]="getAllCityClass()" routerLink="/companyuserdetails">
+      Tüm Şehirler
+    </li>
+    <li
+      (click)="setCurrentCity(city)"
+      routerLink="/companyuser/getcompanyuserdetailsbycityid/{{ city.cityID }}"
+      *ngFor="let city of filteredCities"
+      class="list-group-item list-group-item-action"
+      [class.active]="city === currentCity"
+    >
+      {{ city.cityName }}
+    </li>
+  </ul>
+</div>
+

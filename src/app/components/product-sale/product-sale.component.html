@@ -1,0 +1,40 @@
+<div class="container mt-4">
+  <div *ngIf="isLoading" class="d-flex justify-content-center align-items-center" style="height: 100vh;">
+    <app-loading-spinner></app-loading-spinner>
+  </div>
+  
+  <div [class.content-blur]="isLoading">
+    <div class="card">
+      <div class="card-header">
+        <h5 class="card-title">Ürün Satış</h5>
+      </div>
+      <div class="card-body">
+        <form [formGroup]="saleForm" (ngSubmit)="sell()">
+          <div class="mb-3">
+            <label for="memberSelect" class="form-label">Ad - Telefon</label>
+            <input id="memberSelect" type="text" class="form-control" formControlName="memberId" [matAutocomplete]="autoMember">
+            <mat-autocomplete #autoMember="matAutocomplete" [displayWith]="displayMember">
+              <mat-option *ngFor="let member of filteredMembers | async" [value]="member">
+                {{member.name}} - {{member.phoneNumber}}
+              </mat-option>
+            </mat-autocomplete>
+          </div>
+          <div class="mb-3">
+            <label for="productSelect" class="form-label">Ürün Seçin</label>
+            <input id="productSelect" type="text" class="form-control" formControlName="productId" [matAutocomplete]="autoProduct" (focus)="onProductInputFocus()">
+            <mat-autocomplete #autoProduct="matAutocomplete" [displayWith]="displayProduct">
+              <mat-option *ngFor="let product of filteredProducts | async" [value]="product">
+                {{product.name}} - {{product.price | currency:'TRY':'symbol-narrow':'1.2-2'}}
+              </mat-option>
+            </mat-autocomplete>
+          </div>
+          <div class="mb-3">
+            <label for="quantity" class="form-label">Miktar</label>
+            <input type="number" class="form-control" id="quantity" formControlName="quantity">
+          </div>
+          <button type="submit" class="btn btn-primary" [disabled]="!saleForm.valid">Satış Yap</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

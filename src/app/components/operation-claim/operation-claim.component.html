@@ -1,0 +1,49 @@
+<!-- src/app/components/operation-claim/operation-claim.component.html -->
+<div class="container mt-4">
+    <div class="row">
+      <div class="col-md-6">
+        <div class="card">
+          <div class="card-header">
+            <h3>Yeni Rol Ekle</h3>
+          </div>
+          <div class="card-body">
+            <form [formGroup]="claimForm" (ngSubmit)="addOperationClaim()">
+              <div class="form-group">
+                <label for="name">Rol Adı</label>
+                <input type="text" class="form-control" id="name" formControlName="name">
+              </div>
+              <button type="submit" class="btn btn-primary mt-3" [disabled]="!claimForm.valid || isLoading">
+                {{ isLoading ? 'Ekleniyor...' : 'Rol Ekle' }}
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+  
+      <div class="col-md-6">
+        <div class="card">
+          <div class="card-header">
+            <h3>Rol Listesi</h3>
+          </div>
+          <div class="card-body">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Rol Adı</th>
+                  <th>İşlem</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let claim of operationClaims">
+                  <td>{{ claim.name }}</td>
+                  <td>
+                    <button class="btn btn-danger btn-sm" (click)="deleteOperationClaim(claim)">Sil</button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>

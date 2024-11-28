@@ -1,0 +1,81 @@
+<div class="content mt-4">
+  <div class="d-flex justify-content-center align-items-center" *ngIf="isSubmitting" style="height: 100vh;">
+    <app-loading-spinner></app-loading-spinner>
+  </div>
+
+  <div [class.content-blur]="isSubmitting">
+    <div class="row">
+      <div class="col-md-4">
+        <div class="card">
+          <div class="card-header">
+            <h5 class="title">Şirket ile Şirket Sahibi Bağlantısı Paneli</h5>
+          </div>
+          <div class="card-body">
+            <form [formGroup]="userCompanyAddForm">
+              <div class="mb-3">
+                <mat-form-field appearance="fill">
+                  <mat-label>Şirket Sahibi</mat-label>
+                  <input type="text" matInput formControlName="userID" [matAutocomplete]="autoUser">
+                  <mat-autocomplete #autoUser="matAutocomplete" [displayWith]="displayCompanyUser">
+                    <mat-option *ngFor="let user of filteredCompanyUsers | async" [value]="user">
+                      {{user.name}}
+                    </mat-option>
+                  </mat-autocomplete>
+                </mat-form-field>
+              </div>
+              <div class="mb-3">
+                <mat-form-field appearance="fill">
+                  <mat-label>Şirket</mat-label>
+                  <input type="text" matInput formControlName="companyId" [matAutocomplete]="autoCompany">
+                  <mat-autocomplete #autoCompany="matAutocomplete" [displayWith]="displayCompany">
+                    <mat-option *ngFor="let company of filteredCompanies | async" [value]="company">
+                      {{company.companyName}}
+                    </mat-option>
+                  </mat-autocomplete>
+                </mat-form-field>
+              </div>
+              <button (click)="add()" class="btn btn-fill btn-primary" [disabled]="isSubmitting">
+                {{ isSubmitting ? 'EKLENİYOR...' : 'BAĞLANTI EKLE' }}
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-8">
+        <div class="card">
+          <div class="card-header">
+            <h5 class="title">Şirket ve Şirket Sahibi Bağlantıları</h5>
+          </div>
+          <div class="card-body">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Şirket Sahibi</th>
+                  <th>Şirket</th>
+                  <th>İşlem</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let userCompany of userCompanies">
+                  <td>{{ userCompany.companyUserName }}</td>
+                  <td>{{ userCompany.companyName }}</td>
+                  <td>
+                     <div class="d-flex justify-content-around">
+                      <button class="btn btn-danger btn-sm" (click)="deleteUserCompany(userCompany)">
+                        <fa-icon [icon]="faTrashAlt"></fa-icon>
+                      </button>
+                      <button class="btn btn-primary btn-sm" (click)="openUpdateDialog(userCompany)">
+                        <fa-icon [icon]="faEdit"></fa-icon>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,105 @@
+.active-members-box {
+    background-color: #007bff;
+    color: #fff;
+    padding: 20px;
+    text-align: center;
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
+.active-members-count {
+    font-size: 36px;
+    font-weight: bold;
+    margin: 0;
+}
+
+.active-members-label {
+    font-size: 18px;
+    margin-top: 5px;
+}
+.wrap-input-1 .input:focus {
+    outline: none;
+  }
+  
+  .wrap-input-1 {
+    width: 100%;
+    position: relative;
+  }
+  
+  .wrap-input-1 .input {
+    border: 0;
+    padding: 7px 0;
+    border-bottom: 1px solid #ccc;
+    width: 100%;
+    box-sizing: border-box;
+    letter-spacing: 1px;
+    background-color: #f5f6fd;
+  }
+  
+  .wrap-input-1 .input ~ .focus-border {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background-color: #6c5dd3;
+    transition: 0.4s;
+  }
+  
+  .wrap-input-1 .input:focus ~ .focus-border {
+    width: 100%;
+    transition: 0.4s;
+  }
+  
+  .table-container {
+    max-height: 400px;
+    overflow-y: auto;
+  }
+  
+  .table-container::-webkit-scrollbar {
+    width: 8px;
+  }
+  
+  .table-container::-webkit-scrollbar-track {
+    background: #f1f1f1;
+  }
+  
+  .table-container::-webkit-scrollbar-thumb {
+    background: #888;
+  }
+  
+  .table-container::-webkit-scrollbar-thumb:hover {
+    background: #555;
+  }
+  
+  .btn-outline-primary {
+    color: #007bff;
+    border-color: #007bff;
+  }
+  
+  .btn-outline-primary:hover {
+    color: #fff;
+    background-color: #007bff;
+    border-color: #007bff;
+  }
+  
+  .active-members-box {
+    background-color: #f8f9fa;
+    border-radius: 5px;
+    padding: 15px;
+    margin-top: 20px;
+  }
+  
+  .active-members-label {
+    font-size: 14px;
+    color: #6c757d;
+    margin-bottom: 5px;
+  }
+  
+  .active-members-count {
+    font-size: 24px;
+    font-weight: bold;
+    color: #28a745;
+    margin-bottom: 0;
+  }
+  

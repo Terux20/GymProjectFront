@@ -1,0 +1,66 @@
+<div class="container mt-4">
+  <div *ngIf="isLoading" class="d-flex justify-content-center align-items-center" style="height: 100vh;">
+    <app-loading-spinner></app-loading-spinner>
+  </div>
+  
+  <div [class.content-blur]="isLoading">
+    <div class="row">
+      <div class="col-md-4">
+        <div class="card">
+          <div class="card-header">
+            <h5 class="card-title">Bakiye Yükleme</h5>
+          </div>
+          <div class="card-body">
+            <form [formGroup]="topupForm" (ngSubmit)="topup()">
+              <div class="mb-3">
+                <label for="memberSelect" class="form-label">Üye Seçin</label>
+                <input id="memberSelect" type="text" class="form-control" [formControl]="memberControl" [matAutocomplete]="auto">
+                <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayMember">
+                  <mat-option *ngFor="let member of filteredMembers | async" [value]="member">
+                    {{member.name}} - {{member.phoneNumber}}
+                  </mat-option>
+                </mat-autocomplete>
+              </div>
+              <div class="mb-3">
+                <label for="amount" class="form-label">Yüklenecek TL</label>
+                <input type="number" class="form-control" id="amount" formControlName="amount">
+              </div>
+              <button type="submit" class="btn btn-primary" [disabled]="!topupForm.valid || !memberControl.value">Bakiye Yükle</button>
+            </form>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-8">
+        <div class="card">
+          <div class="card-header">
+            <h5 class="card-title">Bakiye Listesi</h5>
+          </div>
+          <div class="card-body">
+            <div class="table-responsive">
+              <table class="table table-striped">
+                <thead>
+                  <tr>
+                    <th>Adı</th>
+                    <th>Telefon</th>
+                    <th>Bakiye</th>
+                    <th>İşlem</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let member of membersWithBalance">
+                    <td>{{member.name}}</td>
+                    <td>{{member.phoneNumber}}</td>
+                    <td>{{member.balance | currency:'TRY':'symbol-narrow':'1.2-2'}}</td>
+                    <td>
+                      <button class="btn btn-sm btn-primary" (click)="openUpdateDialog(member)">Güncelle</button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

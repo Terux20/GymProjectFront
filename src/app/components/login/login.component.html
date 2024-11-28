@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <title>Giriş Yap</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link href="/css/styles.css" rel="stylesheet">
+</head>
+<body>
+  <div class="login-box">
+    <h2>Giriş Yap</h2>
+    <form [formGroup]="loginForm">
+      <div class="user-box">
+        <input type="email" formControlName="email" required="">
+        <label [class.active]="loginForm.get('email')?.value">E-posta</label>
+      </div>
+      <div class="user-box">
+        <input type="password" formControlName="password" required="">
+        <label [class.active]="loginForm.get('password')?.value">Şifre</label>
+      </div>
+      <a href="#" (click)="login()">
+        Giriş
+      </a>
+      
+    </form>
+  </div>
+</body>
+</html>

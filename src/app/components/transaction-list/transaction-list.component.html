@@ -1,0 +1,31 @@
+<div class="container mt-4">
+  <div *ngIf="isLoading" class="d-flex justify-content-center align-items-center" style="height: 100vh;">
+    <app-loading-spinner></app-loading-spinner>
+  </div>
+  
+  <div [class.content-blur]="isLoading">
+    <h2>İşlem Geçmişi</h2>
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>Üye Adı</th>
+          <th>Ürün Adı</th>
+          <th>Adet</th>
+          <th>Fiyat</th>
+          <th>İşlem Türü</th>
+          <th>Tarih</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let transaction of transactions">
+          <td>{{ transaction.memberName }}</td>
+          <td>{{ transaction.productName || '-' }}</td>
+          <td>{{ transaction.quantity }}</td>
+          <td>{{ transaction.amount | currency:'TRY':'symbol-narrow':'1.2-2' }}</td>
+          <td>{{ transaction.transactionType }}</td>
+          <td>{{ transaction.transactionDate | date:'dd/MM/yyyy HH:mm:ss' }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

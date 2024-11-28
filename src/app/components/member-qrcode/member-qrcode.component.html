@@ -1,0 +1,76 @@
+<div class="gym-container">
+  <div class="gym-panel">
+    <div class="header">
+      <span class="gym-icon">🏋️</span>
+    </div>
+
+    <div class="input-area">
+      <input
+        type="tel"
+        [(ngModel)]="phoneNumber"
+        inputmode="numeric"
+        maxlength="11"
+        (ngModelChange)="onPhoneNumberChange()"
+        placeholder="05XXXXXXXXX"
+      />
+      <button
+        *ngIf="showLookupButton"
+        (click)="lookupMember()"
+        [disabled]="!phoneNumber"
+      >
+        Sorgula
+      </button>
+    </div>
+    <div *ngIf="isError" class="message-area error">
+      {{ message }}
+    </div>
+
+    <div *ngIf="memberInfo" class="result-area">
+      <h2>{{ memberInfo.name }}</h2>
+
+      <div class="membership-info">
+        <div
+          *ngFor="let membership of getFutureMemberships()"
+          class="future-membership"
+        >
+          {{ membership.branch }} üyeliğinizin başlamasına
+          {{ membership.remainingDays }} Gün vardır.
+        </div>
+
+        <div
+          *ngFor="let membership of getActiveMemberships()"
+          class="remaining-days"
+        >
+          {{ membership.branch }} üyeliğinizin bitmesine
+          {{ membership.remainingDays }} gün kalmıştır.
+        </div>
+
+        <div
+          *ngFor="let membership of getExpiredMemberships()"
+          class="expired-membership"
+        >
+          {{ membership.branch }} üyeliğiniz sona ermiştir
+        </div>
+
+        <div
+          *ngIf="memberInfo.memberships.length === 0"
+          class="expired-membership"
+        >
+          Üyeliğinizin Süresi Dolmuştur
+        </div>
+      </div>
+
+      <div *ngIf="memberInfo.scanNumber" class="qr-code-container">
+        <qrcode
+          [qrdata]="memberInfo.scanNumber"
+          [width]="256"
+          [errorCorrectionLevel]="'M'"
+        ></qrcode>
+      </div>
+
+      <button class="download-button" (click)="downloadQRCode()">
+        QR Kodunu İndir
+      </button>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,118 @@
+<div class="content">
+  <div class="col-md-12">
+    <div class="card">
+      <div class="card-header">
+        <h5 class="title">Üyelik Paneli</h5>
+      </div>
+      <div class="card-body">
+        <form [formGroup]="membershipAddForm">
+          <div class="row">
+            <div class="col-md-4 mb-3">
+              <label for="memberID">Ad - Telefon</label>
+              <div class="form-group">
+                <input
+                  type="text"
+                  id="memberID"
+                  formControlName="memberID"
+                  class="form-control"
+                  [matAutocomplete]="autoMember"
+                  required
+                />
+                <mat-autocomplete #autoMember="matAutocomplete" [displayWith]="displayMember">
+                  <mat-option *ngFor="let member of filteredMembers | async" [value]="member">
+                    {{ member.name }} - {{ member.phoneNumber }}
+                  </mat-option>
+                </mat-autocomplete>
+              </div>
+            </div>
+
+            <div class="col-md-4 mb-3">
+              <label for="membershipTypeID">Üyelik Türü</label>
+              <div class="form-group">
+                <input
+                  type="text"
+                  id="membershipTypeID"
+                  formControlName="membershipTypeID"
+                  class="form-control"
+                  [matAutocomplete]="autoMembershipType"
+                  (click)="showBranchList = true"
+                  required
+                />
+                <mat-autocomplete #autoMembershipType="matAutocomplete">
+                  <div *ngIf="showBranchList">
+                    <mat-option
+                      *ngFor="let membershipType of filteredMembershipTypes | async"
+                      [value]="membershipType.branch + ' - ' + membershipType.typeName"
+                    >
+                      {{ membershipType.branch }} - {{ membershipType.typeName }}
+                    </mat-option>
+                  </div>
+                </mat-autocomplete>
+              </div>
+            </div>
+
+            <div class="col-md-4 mb-3">
+              <div class="form-group">
+                <label>Başlangıç Tarihi</label>
+                <input type="date" class="form-control" formControlName="startDate">
+              </div>
+              <div class="last-membership-info" *ngIf="lastMembershipInfo">
+                <small>{{ lastMembershipInfo }}</small>
+              </div>
+            </div>
+            <div class="col-md-4 mb-3">
+              <label for="day">Gün Sayısı</label>
+              <div class="form-group">
+                <input
+                  type="number"
+                  id="day"
+                  formControlName="day"
+                  class="form-control"
+                  (input)="calculateEndDate()"
+                  required
+                />
+              </div>
+            </div>
+            <div class="col-md-4 mb-3">
+              <label for="price">Ücret</label>
+              <div class="form-group">
+                <input
+                  type="text"
+                  id="price"
+                  formControlName="price"
+                  class="form-control"
+                  required
+                />
+              </div>
+            </div>
+            <div class="col-md-4 mb-3">
+              <label for="PaymentMethod">Ödeme Türü</label>
+              <div class="form-group">
+                <select
+                  id="PaymentMethod"
+                  formControlName="PaymentMethod"
+                  class="form-control"
+                  required
+                >
+                  <option value="">Seçiniz</option>
+                  <option value="Nakit">Nakit</option>
+                  <option value="Kredi Kartı">Kredi Kartı</option>
+                  <option value="Havale - EFT">Havale - EFT</option>
+                  <option value="Borç">Borç</option>
+                </select>
+              </div>
+            </div>
+          </div>
+         
+        </form>
+      </div>
+      <div class="card-footer">
+        <button class="btn btn-fill btn-primary" (click)="add()" [disabled]="isSubmitting">
+          {{ isSubmitting ? 'Üyelik Ekleniyor...' : 'Ekle' }}
+
+
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

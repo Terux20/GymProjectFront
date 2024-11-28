@@ -1,0 +1,31 @@
+<div class="container mt-4">
+  <div *ngIf="isLoading" class="d-flex justify-content-center align-items-center" style="height: 100vh;">
+    <app-loading-spinner></app-loading-spinner>
+  </div>
+
+  <div [class.content-blur]="isLoading">
+    <h2>Bugün Gelen Üyeler ({{ selectedDate | date:'dd/MM/yyyy' }})</h2>
+    
+    <div class="mb-3">
+      <label for="dateFilter" class="form-label">Tarih Seçin:</label>
+      <input type="date" id="dateFilter" class="form-control" [(ngModel)]="selectedDate" (change)="onDateChange()">
+    </div>
+  
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>Üye Adı</th>
+          <th>Telefon</th>
+          <th>Giriş Saati</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let entry of entries">
+          <td>{{ entry.name }}</td>
+          <td>{{ entry.phoneNumber }}</td>
+          <td>{{ entry.entryTime | date:'HH:mm:ss' }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

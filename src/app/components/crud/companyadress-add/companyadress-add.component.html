@@ -1,0 +1,102 @@
+<div class="content mt-4">
+  <div class="d-flex justify-content-center align-items-center" *ngIf="isSubmitting" style="height: 100vh;">
+    <app-loading-spinner></app-loading-spinner>
+  </div>
+
+  <div [class.content-blur]="isSubmitting">
+    <div class="row">
+      <div class="col-md-4">
+        <div class="card">
+          <div class="card-header">
+            <h5 class="title">Şirket Adresi Bilgileri Paneli</h5>
+          </div>
+          <div class="card-body">
+            <form [formGroup]="companyAdressAddForm">
+              <div class="mb-3">
+                <mat-form-field appearance="fill">
+                  <mat-label>Şirket Adı</mat-label>
+                  <input type="text" matInput formControlName="company" [matAutocomplete]="autoCompany">
+                  <mat-autocomplete #autoCompany="matAutocomplete" [displayWith]="displayCompany">
+                    <mat-option *ngFor="let company of filteredCompanies | async" [value]="company">
+                      {{company.companyName}}
+                    </mat-option>
+                  </mat-autocomplete>
+                </mat-form-field>
+              </div>
+              <div class="mb-3">
+                <mat-form-field appearance="fill">
+                  <mat-label>İl</mat-label>
+                  <input type="text" matInput formControlName="city" [matAutocomplete]="autoCity">
+                  <mat-autocomplete #autoCity="matAutocomplete" [displayWith]="displayCity">
+                    <mat-option *ngFor="let city of filteredCities | async" [value]="city">
+                      {{city.cityName}}
+                    </mat-option>
+                  </mat-autocomplete>
+                </mat-form-field>
+              </div>
+              <div class="mb-3">
+                <mat-form-field appearance="fill">
+                  <mat-label>İlçe</mat-label>
+                  <input type="text" matInput formControlName="town" [matAutocomplete]="autoTown">
+                  <mat-autocomplete #autoTown="matAutocomplete" [displayWith]="displayTown">
+                    <mat-option *ngFor="let town of filteredTowns | async" [value]="town">
+                      {{town.townName}}
+                    </mat-option>
+                  </mat-autocomplete>
+                </mat-form-field>
+              </div>
+              <div class="mb-3">
+                <mat-form-field appearance="fill">
+                  <mat-label>Adres</mat-label>
+                  <textarea matInput formControlName="adress"></textarea>
+                </mat-form-field>
+              </div>
+              <button (click)="add()" class="btn btn-fill btn-primary" [disabled]="isSubmitting">
+                {{ isSubmitting ? 'EKLENİYOR...' : 'ADRES EKLE' }}
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-8">
+        <div class="card">
+          <div class="card-header">
+            <h5 class="title">Şirket Adresleri Listesi</h5>
+          </div>
+          <div class="card-body">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Şirket Adı</th>
+                  <th>İl</th>
+                  <th>İlçe</th>
+                  <th>Adres</th>
+                  <th>İşlem</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let address of companyAddresses">
+                  <td>{{ address.companyName }}</td>
+                  <td>{{ address.cityName }}</td>
+                  <td>{{ address.townName }}</td>
+                  <td>{{ address.adress }}</td>
+                  <td>
+                    <div class="d-flex justify-content-around">
+                      <button class="btn btn-danger btn-sm" (click)="deleteCompanyAddress(address)">
+                        <fa-icon [icon]="faTrashAlt"></fa-icon>
+                      </button>
+                      <button class="btn btn-primary btn-sm" (click)="openUpdateDialog(address)">
+                        <fa-icon [icon]="faEdit"></fa-icon>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

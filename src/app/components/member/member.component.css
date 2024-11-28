@@ -1,0 +1,135 @@
+Search input styles
+.wrap-input-1 .input:focus {
+  outline: none;
+}
+
+.wrap-input-1 {
+  width: 100%;
+  position: relative;
+}
+
+.wrap-input-1 .input {
+  border: 0;
+  padding: 7px 0;
+  border-bottom: 1px solid #ccc;
+  width: 100%;
+  box-sizing: border-box;
+  letter-spacing: 1px;
+  background-color: #f5f6fd;
+}
+
+.wrap-input-1 .input ~ .focus-border {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background-color: #6c5dd3;
+  transition: 0.4s;
+}
+
+.wrap-input-1 .input:focus ~ .focus-border {
+  width: 100%;
+  transition: 0.4s;
+}
+
+.member-list-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.table-container {
+  flex-grow: 1;
+}
+
+.pagination-container {
+  margin-top: 15px;
+  display: flex;
+  justify-content: center;
+}
+
+.table-container::-webkit-scrollbar {
+  width: 8px;
+}
+
+.table-container::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+.table-container::-webkit-scrollbar-thumb {
+  background: #888;
+}
+
+.table-container::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+.update-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  gap: 10px; 
+}
+
+.form-column {
+  flex: 1;
+}
+
+.mat-form-field {
+  width: 100%;
+}
+
+.mat-dialog-content {
+  overflow: hidden;
+}
+/* Açık mod stilleri */
+body {
+  background-color: #f4f4f4;
+  color: #333;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+/* Karanlık mod stilleri */
+body.dark-mode {
+  background-color: #333;
+  color: #f4f4f4;
+}
+
+.dark-mode .navbar {
+  background-color: #222;
+}
+
+.dark-mode .dropdown-menu {
+  background-color: #444;
+}
+
+.dark-mode .dropdown-item {
+  color: #f4f4f4;
+}
+
+.dark-mode .dropdown-item:hover {
+  background-color: #555;
+}
+.content-blur {
+  filter: blur(2px);
+  pointer-events: none;
+ }
+ 
+ .table thead th {
+  background-color: #4a7299;
+  color: #fff;
+ }
+ 
+ .table td, .table th {
+  vertical-align: middle;
+ }
+ 
+ .table .btn {
+  width: 100px;
+ }
+/* Diğer karanlık mod stilleri buraya eklenebilir */

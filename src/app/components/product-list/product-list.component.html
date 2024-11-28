@@ -1,0 +1,61 @@
+<div class="container-fluid mt-4">
+  <div *ngIf="isLoading" class="d-flex justify-content-center align-items-center" style="height: 100vh;">
+    <app-loading-spinner></app-loading-spinner>
+  </div>
+  
+  <div class="row" [class.content-blur]="isLoading">
+    <div class="col-md-4">
+      <div class="card">
+        <div class="card-header">
+          <h5 class="card-title">Yeni Ürün Ekle</h5>
+        </div>
+        <div class="card-body">
+          <form [formGroup]="productForm" (ngSubmit)="addProduct()">
+            <div class="mb-3">
+              <label for="name" class="form-label">Ürün Adı</label>
+              <input type="text" class="form-control" id="name" formControlName="name">
+            </div>
+            <div class="mb-3">
+              <label for="price" class="form-label">Fiyat</label>
+              <input type="number" class="form-control" id="price" formControlName="price">
+            </div>
+            
+            <button type="submit" class="btn btn-primary" [disabled]="!productForm.valid">Ürün Ekle</button>
+          </form>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-8">
+      <div class="card">
+        <div class="card-header">
+          <h5 class="card-title">Ürün Listesi</h5>
+        </div>
+        <div class="card-body">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Ürün Adı</th>
+                <th>Fiyat</th>
+                <th>İşlem</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let product of products">
+                <td>{{ product.name }}</td>
+                <td>{{ product.price | currency:'TRY':'symbol-narrow':'1.2-2' }}</td>
+                <td>
+                  <button class="btn btn-sm btn-primary me-2" (click)="editProduct(product)">
+                    <fa-icon [icon]="faEdit"></fa-icon> Düzenle
+                  </button>
+                  <button class="btn btn-sm btn-danger" (click)="deleteProduct(product)">
+                    <fa-icon [icon]="faTrashAlt"></fa-icon> Sil
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

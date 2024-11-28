@@ -1,0 +1,56 @@
+
+<h1 mat-dialog-title>Üye Bilgilerini Güncelle</h1>
+<div mat-dialog-content>
+  <form [formGroup]="updateForm" class="update-form" (ngSubmit)="updateMember()">
+    <div class="form-row">
+      <div class="form-column">
+        <mat-form-field>
+          <mat-label>Ad Soyad</mat-label>
+          <input matInput formControlName="name" required />
+        </mat-form-field>
+      </div>
+      <div class="form-column">
+        <mat-form-field>
+          <mat-label>Telefon Numarası</mat-label>
+          <input matInput formControlName="phoneNumber" required 
+          maxlength="11"/>
+        </mat-form-field>
+      </div>
+      <div class="form-column">
+        <mat-form-field>
+          <mat-label>Cinsiyet</mat-label>
+          <mat-select formControlName="gender" required>
+            <mat-option [value]="1">Erkek</mat-option>
+            <mat-option [value]="2">Kadın</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-column">
+        <mat-form-field>
+          <mat-label>Doğum Tarihi</mat-label>
+          <input matInput [matDatepicker]="picker" formControlName="birthDate" />
+          <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+          <mat-datepicker #picker></mat-datepicker>
+        </mat-form-field>
+      </div>
+      <div class="form-column">
+        <mat-form-field>
+          <mat-label>Adres</mat-label>
+          <input matInput formControlName="adress" />
+        </mat-form-field>
+      </div>
+      <div class="form-column">
+        <mat-form-field>
+          <mat-label>E Posta</mat-label>
+          <input matInput formControlName="email" />
+        </mat-form-field>
+      </div>
+    </div>
+    <div mat-dialog-actions>
+      <button mat-button type="button" (click)="onNoClick()">İptal</button>
+      <button mat-button type="submit" [disabled]="!updateForm.valid" #updateButton>Güncelle</button>
+    </div>
+  </form>
+</div>

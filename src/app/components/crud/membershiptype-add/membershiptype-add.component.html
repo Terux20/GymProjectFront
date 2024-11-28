@@ -1,0 +1,95 @@
+<div class="content mt-4">
+  <div class="row">
+    <div class="col-md-4">
+      <div class="card">
+        <div class="card-header ">
+          <h5 class="title">Üyelik Türü</h5>
+        </div>
+        <div class="card-body">
+          <form [formGroup]="membershipTypeAddForm">
+            <div class="mb-3">
+              <label for="branch" class="form-label">BRANŞ SEÇİN</label>
+              <select id="branch" formControlName="branch" class="form-select">
+                <option value="">Seçiniz</option>
+                <option value="Fitness">Fitness</option>
+                <option value="Boks">Boks</option>
+                <option value="Muay Thai">Muay Thai</option>
+                <option value="MMA">MMA</option>
+                <option value="Karate">Karate</option>
+                <option value="Judo">Judo</option>
+                <option value="Güreş">Güreş</option>
+                <option value="Pilates">Pilates</option>
+                <option value="Yoga">Yoga</option>
+                <option value="KickBoks">KickBoks</option>
+                <option value="Aerobik">Aerobik</option>
+                <option value="CrossFit">CrossFit</option>
+              </select>
+            </div>
+
+            <div class="mb-3">
+              <label for="typeName" class="form-label">PAKET İSMİ</label>
+              <input
+                type="text"
+                id="typeName"
+                formControlName="typeName"
+                class="form-control"
+                placeholder="1 AY, 1 AY ÖĞRENCİ vb."
+              />
+            </div>
+
+            <div class="mb-3">
+              <label for="validity" class="form-label">GEÇERLİLİK SÜRESİ</label>
+              <div class="d-flex">
+                <select id="year" formControlName="year" class="form-select me-2">
+                  <option *ngFor="let i of [].constructor(11); let year = index" [value]="year">
+                    {{ year }} YIL
+                  </option>
+                </select>
+                <select id="month" formControlName="month" class="form-select me-2">
+                  <option *ngFor="let i of [].constructor(13); let month = index" [value]="month">
+                    {{ month }} AY
+                  </option>
+                </select>
+                <select id="day" formControlName="day" class="form-select">
+                  <option *ngFor="let i of [].constructor(32); let day = index" [value]="day">
+                    {{ day }} GÜN
+                  </option>
+                </select>
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label for="price" class="form-label">ÜCRET</label>
+              <input
+                type="number"
+                id="price"
+                formControlName="price"
+                class="form-control"
+                min="0"
+              />
+            </div>
+
+            <button 
+              class="btn btn-fill btn-primary w-100" 
+              (click)="add()" 
+              [disabled]="!membershipTypeAddForm.valid || isSubmitting"
+            >
+              {{ isSubmitting ? 'KAYIT YAPILIYOR...' : 'PAKETİ KAYDET' }}
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-8">
+      <div class="card">
+        <div class="card-header ">
+          <h5 class="title">Üyelik Türleri</h5>
+        </div>
+        <div class="card-body">
+          <app-membershiptype></app-membershiptype>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
