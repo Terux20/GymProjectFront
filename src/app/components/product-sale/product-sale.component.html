@@ -1,40 +1,130 @@
 <div class="container mt-4">
-  <div *ngIf="isLoading" class="d-flex justify-content-center align-items-center" style="height: 100vh;">
-    <app-loading-spinner></app-loading-spinner>
+  <div class="d-flex justify-content-center align-items-center" *ngIf="isLoading">
+      <app-loading-spinner></app-loading-spinner>
   </div>
-  
-  <div [class.content-blur]="isLoading">
-    <div class="card">
-      <div class="card-header">
-        <h5 class="card-title">Ürün Satış</h5>
+
+  <div class="row" [class.content-blur]="isLoading">
+      <!-- Sol Panel - Satış Formu -->
+      <div class="col-lg-7 mb-4">
+          <div class="card shadow">
+              <div class="card-header bg-primary text-white">
+                  <h5 class="mb-0">Ürün Satış Formu</h5>
+              </div>
+              <div class="card-body">
+                  <form [formGroup]="saleForm" class="row g-3">
+                      <!-- Üye Seçimi -->
+                      <div class="col-12">
+                          <mat-form-field appearance="outline" class="w-100">
+                              <mat-label>Üye Seçimi</mat-label>
+                              <input matInput 
+                                     formControlName="member" 
+                                     [matAutocomplete]="autoMember"
+                                     placeholder="Üye adı veya telefon numarası">
+                              <mat-autocomplete #autoMember="matAutocomplete" [displayWith]="displayMember">
+                                  <mat-option *ngFor="let member of filteredMembers | async" [value]="member">
+                                      {{member.name}} - {{member.phoneNumber}}
+                                  </mat-option>
+                              </mat-autocomplete>
+                          </mat-form-field>
+                      </div>
+
+                      <!-- Ürün Seçimi ve Miktar -->
+                      <div class="col-md-8">
+                          <mat-form-field appearance="outline" class="w-100">
+                              <mat-label>Ürün Seçimi</mat-label>
+                              <input matInput 
+                                     formControlName="product" 
+                                     [matAutocomplete]="autoProduct"
+                                     placeholder="Ürün adı">
+                              <mat-autocomplete #autoProduct="matAutocomplete" [displayWith]="displayProduct">
+                                  <mat-option *ngFor="let product of products" [value]="product">
+                                      {{product.name}} - {{product.price | currency:'TRY':'symbol-narrow':'1.2-2'}}
+                                  </mat-option>
+                              </mat-autocomplete>
+                          </mat-form-field>
+                      </div>
+
+                      <div class="col-md-4">
+                          <mat-form-field appearance="outline" class="w-100">
+                              <mat-label>Miktar</mat-label>
+                              <input matInput type="number" min="1" formControlName="quantity">
+                          </mat-form-field>
+                      </div>
+
+                      <!-- Sepete Ekle Butonu -->
+                      <div class="col-12">
+                          <button mat-raised-button 
+                                  color="primary" 
+                                  class="w-100" 
+                                  [disabled]="!saleForm.get('product')?.value || !saleForm.get('quantity')?.value"
+                                  (click)="addToCart()">
+                              <mat-icon class="me-2">add_shopping_cart</mat-icon>
+                              Sepete Ekle
+                          </button>
+                      </div>
+                  </form>
+              </div>
+          </div>
       </div>
-      <div class="card-body">
-        <form [formGroup]="saleForm" (ngSubmit)="sell()">
-          <div class="mb-3">
-            <label for="memberSelect" class="form-label">Ad - Telefon</label>
-            <input id="memberSelect" type="text" class="form-control" formControlName="memberId" [matAutocomplete]="autoMember">
-            <mat-autocomplete #autoMember="matAutocomplete" [displayWith]="displayMember">
-              <mat-option *ngFor="let member of filteredMembers | async" [value]="member">
-                {{member.name}} - {{member.phoneNumber}}
-              </mat-option>
-            </mat-autocomplete>
+
+      <!-- Sağ Panel - Sepet -->
+      <div class="col-lg-5">
+          <div class="card shadow">
+              <div class="card-header bg-info text-white d-flex justify-content-between align-items-center">
+                  <h5 class="mb-0">Sepet</h5>
+                  <span class="badge bg-light text-dark fs-6">
+                      {{totalAmount | currency:'TRY':'symbol-narrow':'1.2-2'}}
+                  </span>
+              </div>
+              
+              <div class="card-body">
+                  <!-- Boş Sepet -->
+                  <div *ngIf="cartItems.length === 0" class="text-center py-5">
+                      <mat-icon class="text-muted" style="font-size: 48px; width: 48px; height: 48px;">
+                          shopping_cart
+                      </mat-icon>
+                      <p class="text-muted mt-3 mb-0">Sepetiniz boş</p>
+                  </div>
+
+                  <!-- Sepet İçeriği -->
+                  <div *ngIf="cartItems.length > 0">
+                      <div class="cart-items">
+                          <div *ngFor="let item of cartItems; let i = index" 
+                               class="cart-item p-3 mb-2 bg-light rounded border">
+                              <div class="d-flex justify-content-between align-items-center">
+                                  <div>
+                                      <h6 class="mb-1">{{getProductName(item.productId)}}</h6>
+                                      <small class="text-muted">
+                                          {{item.quantity}} adet x 
+                                          {{item.unitPrice | currency:'TRY':'symbol-narrow':'1.2-2'}}
+                                      </small>
+                                  </div>
+                                  <div class="d-flex align-items-center">
+                                      <span class="me-3 fw-bold">
+                                          {{item.quantity * item.unitPrice | currency:'TRY':'symbol-narrow':'1.2-2'}}
+                                      </span>
+                                      <button mat-icon-button color="warn" (click)="removeFromCart(i)">
+                                          <mat-icon>close</mat-icon>
+                                      </button>
+                                  </div>
+                              </div>
+                          </div>
+                      </div>
+
+                      <!-- Satış Tamamla -->
+                      <div class="mt-4">
+                          <button mat-raised-button 
+                                  color="accent" 
+                                  class="w-100" 
+                                  [disabled]="!saleForm.get('member')?.value || cartItems.length === 0"
+                                  (click)="sell()">
+                              <mat-icon class="me-2">shopping_cart_checkout</mat-icon>
+                              Satışı Tamamla
+                          </button>
+                      </div>
+                  </div>
+              </div>
           </div>
-          <div class="mb-3">
-            <label for="productSelect" class="form-label">Ürün Seçin</label>
-            <input id="productSelect" type="text" class="form-control" formControlName="productId" [matAutocomplete]="autoProduct" (focus)="onProductInputFocus()">
-            <mat-autocomplete #autoProduct="matAutocomplete" [displayWith]="displayProduct">
-              <mat-option *ngFor="let product of filteredProducts | async" [value]="product">
-                {{product.name}} - {{product.price | currency:'TRY':'symbol-narrow':'1.2-2'}}
-              </mat-option>
-            </mat-autocomplete>
-          </div>
-          <div class="mb-3">
-            <label for="quantity" class="form-label">Miktar</label>
-            <input type="number" class="form-control" id="quantity" formControlName="quantity">
-          </div>
-          <button type="submit" class="btn btn-primary" [disabled]="!saleForm.valid">Satış Yap</button>
-        </form>
       </div>
-    </div>
   </div>
 </div>

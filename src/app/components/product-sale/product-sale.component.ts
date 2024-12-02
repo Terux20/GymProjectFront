@@ -1,13 +1,19 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
 import { MemberService } from '../../services/member.service';
 import { ProductService } from '../../services/product.service';
 import { TransactionService } from '../../services/transaction.service';
 import { ToastrService } from 'ngx-toastr';
 import { Member } from '../../models/member';
 import { Product } from '../../models/product';
-import { Observable, of } from 'rxjs';
+import { Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
+
+interface CartItem {
+  productId: number;
+  quantity: number;
+  unitPrice: number;
+}
 
 @Component({
   selector: 'app-product-sale',
@@ -19,8 +25,9 @@ export class ProductSaleComponent implements OnInit {
   members: Member[] = [];
   products: Product[] = [];
   filteredMembers: Observable<Member[]>;
-  filteredProducts: Observable<Product[]>;
   isLoading: boolean = false;
+  cartItems: CartItem[] = [];
+  totalAmount: number = 0;
 
   constructor(
     private fb: FormBuilder,
@@ -34,56 +41,82 @@ export class ProductSaleComponent implements OnInit {
     this.createSaleForm();
     this.getMembers();
     this.getProducts();
+
+    this.filteredMembers = this.saleForm.get('member')!.valueChanges.pipe(
+      startWith(''),
+      map(value => typeof value === 'string' ? value : value?.name ?? ''),
+      map(name => name ? this._filterMembers(name) : this.members.slice())
+    );
   }
 
   createSaleForm() {
     this.saleForm = this.fb.group({
-      memberId: ['', Validators.required],
-      productId: ['', Validators.required],
+      member: ['', Validators.required],
+      product: [''],
       quantity: [1, [Validators.required, Validators.min(1)]]
     });
-
-    this.filteredMembers = this.saleForm.get('memberId')?.valueChanges.pipe(
-      startWith(''),
-      map(value => typeof value === 'string' ? value : value?.name ?? ''),
-      map(name => name ? this._filterMembers(name) : this.members.slice())
-    ) ?? of([]);
-
-    this.filteredProducts = this.saleForm.get('productId')?.valueChanges.pipe(
-      startWith(''),
-      map(value => {
-        const name = typeof value === 'string' ? value : value?.name ?? '';
-        return name ? this._filterProducts(name) : this.products.slice();
-      })
-    ) ?? of([]);
   }
 
-  getMembers() {
-    this.isLoading = true;
-    this.memberService.getMembers().subscribe(
-      response => {
-        this.members = response.data;
-        this.isLoading = false;
-      },
-      error => {
-        this.toastrService.error('Üyeler yüklenirken bir hata oluştu', 'Hata');
-        this.isLoading = false;
-      }
-    );
+  addToCart() {
+    const selectedProduct = this.saleForm.get('product')?.value;
+    const quantity = this.saleForm.get('quantity')?.value;
+
+    if (selectedProduct && quantity) {
+      const cartItem: CartItem = {
+        productId: selectedProduct.productID,
+        quantity: quantity,
+        unitPrice: selectedProduct.price
+      };
+
+      this.cartItems.push(cartItem);
+      this.calculateTotal();
+      this.saleForm.patchValue({ product: '', quantity: 1 });
+    }
   }
 
-  getProducts() {
-    this.isLoading = true;
-    this.productService.getProducts().subscribe(
-      response => {
-        this.products = response.data;
-        this.isLoading = false;
-      },
-      error => {
-        this.toastrService.error('Ürünler yüklenirken bir hata oluştu', 'Hata');
-        this.isLoading = false;
-      }
-    );
+  removeFromCart(index: number) {
+    this.cartItems.splice(index, 1);
+    this.calculateTotal();
+  }
+
+  getProductName(productId: number): string {
+    const product = this.products.find(p => p.productID === productId);
+    return product ? product.name : '';
+  }
+
+  calculateTotal() {
+    this.totalAmount = this.cartItems.reduce((sum, item) => 
+      sum + (item.unitPrice * item.quantity), 0);
+  }
+
+  sell() {
+    if (this.saleForm.get('member')?.valid && this.cartItems.length > 0) {
+      this.isLoading = true;
+      const selectedMember = this.saleForm.get('member')?.value;
+
+      const bulkTransaction = {
+        memberID: selectedMember.memberID,
+        transactionType: 'Satış',
+        items: this.cartItems.map(item => ({
+          productID: item.productId,
+          quantity: item.quantity,
+          unitPrice: item.unitPrice,
+          amount: item.quantity * item.unitPrice
+        }))
+      };
+
+      this.transactionService.addBulkTransaction(bulkTransaction).subscribe({
+        next: (response) => {
+          this.toastrService.success('Ürün satışı başarılı', 'Başarılı');
+          this.resetForm();
+          this.isLoading = false;
+        },
+        error: (error) => {
+          this.toastrService.error('Ürün satışı başarısız', 'Hata');
+          this.isLoading = false;
+        }
+      });
+    }
   }
 
   displayMember(member: Member): string {
@@ -91,7 +124,7 @@ export class ProductSaleComponent implements OnInit {
   }
 
   displayProduct(product: Product): string {
-    return product && product.name ? product.name : '';
+    return product && product.name ? `${product.name} (${product.price}₺)` : '';
   }
 
   private _filterMembers(name: string): Member[] {
@@ -102,46 +135,25 @@ export class ProductSaleComponent implements OnInit {
     );
   }
 
-  private _filterProducts(name: string): Product[] {
-    const filterValue = name.toLowerCase();
-    return this.products.filter(product => 
-      product.name.toLowerCase().includes(filterValue) || 
-      product.price.toString().includes(filterValue)
-    );
+  getMembers() {
+    this.memberService.getMembers().subscribe(response => {
+      this.members = response.data;
+    });
   }
 
-  onProductInputFocus() {
-    this.filteredProducts = of(this.products);
+  getProducts() {
+    this.productService.getProducts().subscribe(response => {
+      this.products = response.data;
+    });
   }
 
-  sell() {
-    if (this.saleForm.valid) {
-      this.isLoading = true;
-      const selectedMember = this.saleForm.get('memberId')?.value;
-      const selectedProduct = this.saleForm.get('productId')?.value;
-      const quantity = this.saleForm.get('quantity')?.value;
-      
-      const totalAmount = selectedProduct.price * quantity;
-
-      const saleData = {
-        memberID: selectedMember.memberID,
-        productID: selectedProduct.productID,
-        amount: totalAmount,
-        quantity: quantity,
-        transactionType: 'Satış'
-      };
-
-      this.transactionService.addTransaction(saleData).subscribe(
-        response => {
-          this.toastrService.success('Ürün satışı başarılı', 'Başarılı');
-          this.saleForm.reset({quantity: 1});
-          this.isLoading = false;
-        },
-        error => {
-          this.toastrService.error('Ürün satışı başarısız', 'Hata');
-          this.isLoading = false;
-        }
-      );
-    }
+  resetForm() {
+    this.saleForm.reset({
+      member: '',
+      product: '',
+      quantity: 1
+    });
+    this.cartItems = [];
+    this.totalAmount = 0;
   }
 }

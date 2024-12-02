@@ -17,13 +17,22 @@ export class TransactionService extends BaseApiService {
   addTransaction(transaction: any): Observable<ResponseModel> {
     return this.httpClient.post<ResponseModel>(this.apiUrl + 'transactions/add', transaction);
   }
-
+  addBulkTransaction(transaction: any): Observable<ResponseModel> {
+    return this.httpClient.post<ResponseModel>(this.apiUrl + 'transactions/addBulk', transaction);
+  }
   getTransactionsWithDetails(): Observable<ListResponseModel<Transaction>> {
     return this.httpClient.get<ListResponseModel<Transaction>>(this.apiUrl + 'transactions/getwithuserproductdetails');
   }
+
   getTransactionsByMemberId(memberId: number): Observable<ListResponseModel<Transaction>> {
     return this.httpClient.get<ListResponseModel<Transaction>>(this.apiUrl + 'transactions/getbymemberid?memberId=' + memberId);
   }
 
+  getUnpaidTransactions(memberId: number): Observable<ListResponseModel<Transaction>> {
+    return this.httpClient.get<ListResponseModel<Transaction>>(this.apiUrl + 'transactions/getunpaidtransactions?memberId=' + memberId);
+  }
 
+  updatePaymentStatus(transactionId: number): Observable<ResponseModel> {
+    return this.httpClient.post<ResponseModel>(`${this.apiUrl}transactions/updatepaymentstatus/${transactionId}`, {});
+  }
 }

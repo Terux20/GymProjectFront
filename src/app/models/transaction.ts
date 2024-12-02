@@ -1,12 +1,14 @@
-// transaction.ts
 export interface Transaction {
   transactionID: number;
   memberID: number;
-  memberName: string; // Yeni eklendi
+  memberName: string;
   productID?: number;
-  productName?: string; // Yeni eklendi
+  productName?: string;
   amount: number;
+  unitPrice: number;
   transactionType: string;
   transactionDate: Date;
-  quantity: number | string; // Bu satırı değiştirin
+  quantity: number | string;
+  isPaid: boolean;
+  balance: number;
 }

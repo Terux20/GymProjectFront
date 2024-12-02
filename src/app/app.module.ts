@@ -73,7 +73,8 @@ import { CompanyUserUpdateComponent } from './components/crud/company-user-updat
 import { UserCompanyUpdateComponent } from './components/crud/user-company-update/user-company-update.component';
 import { OperationClaimComponent } from './components/operation-claim/operation-claim.component';
 import { UserOperationClaimComponent } from './components/user-operation-claim/user-operation-claim.component';
-
+import { MatIconModule } from '@angular/material/icon';
+import { TransactionPaymentDialogComponent } from './components/transaction-payment-dialog/transaction-payment-dialog.component';
 registerLocaleData(localeTr);
 
 @NgModule({
@@ -123,7 +124,8 @@ registerLocaleData(localeTr);
     CompanyUserUpdateComponent,
     UserCompanyUpdateComponent,
     OperationClaimComponent,
-    UserOperationClaimComponent
+    UserOperationClaimComponent,
+    TransactionPaymentDialogComponent
   ],
   imports: [
     BrowserModule,
@@ -147,6 +149,7 @@ registerLocaleData(localeTr);
     FontAwesomeModule,
     MatDatepickerModule,
     MatNativeDateModule,
+    MatIconModule,
     QRCodeModule,
     NgxPaginationModule
   ],
