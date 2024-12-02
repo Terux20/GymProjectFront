@@ -15,6 +15,11 @@ interface MemberTotals {
   [key: string]: number;
 }
 
+interface MemberLastTransaction {
+  memberId: string;
+  lastTransactionDate: Date;
+}
+
 @Component({
   selector: 'app-transaction-list',
   templateUrl: './transaction-list.component.html',
@@ -28,7 +33,8 @@ export class TransactionListComponent implements OnInit {
   selectedMemberId: number | null = null;
   groupedTransactions: GroupedTransactions = {};
   memberTotals: MemberTotals = {};
-  selectedMonth: string = ''; // Yeni eklendi
+  selectedMonth: string = '';
+  orderedMemberIds: string[] = [];
 
   constructor(
     private transactionService: TransactionService,
@@ -53,9 +59,7 @@ export class TransactionListComponent implements OnInit {
         this.transactions = response.data.map(transaction => ({
           ...transaction,
           quantity: transaction.transactionType === 'Bakiye Yükleme' ? '-' : transaction.quantity
-        })).sort((a, b) => {
-          return new Date(b.transactionDate).getTime() - new Date(a.transactionDate).getTime();
-        });
+        }));
         this.filterByMonth();
         this.isLoading = false;
       },
@@ -82,13 +86,40 @@ export class TransactionListComponent implements OnInit {
   }
 
   groupTransactionsByMember() {
+    // Reset groupedTransactions
     this.groupedTransactions = {};
+    
+    // Group transactions by member
     this.filteredTransactions.forEach(transaction => {
       const key = transaction.memberID.toString();
       if (!this.groupedTransactions[key]) {
         this.groupedTransactions[key] = [];
       }
       this.groupedTransactions[key].push(transaction);
+    });
+
+    // Find last transaction date for each member
+    const memberLastTransactions: MemberLastTransaction[] = Object.keys(this.groupedTransactions).map(memberId => {
+      const transactions = this.groupedTransactions[memberId];
+      const lastTransactionDate = new Date(Math.max(
+        ...transactions.map(t => new Date(t.transactionDate).getTime())
+      ));
+      return {
+        memberId,
+        lastTransactionDate
+      };
+    });
+
+    // Sort members by their last transaction date (descending)
+    this.orderedMemberIds = memberLastTransactions
+      .sort((a, b) => b.lastTransactionDate.getTime() - a.lastTransactionDate.getTime())
+      .map(m => m.memberId);
+
+    // Sort each member's transactions by date (descending)
+    Object.keys(this.groupedTransactions).forEach(memberId => {
+      this.groupedTransactions[memberId].sort((a, b) => 
+        new Date(b.transactionDate).getTime() - new Date(a.transactionDate).getTime()
+      );
     });
   }
 

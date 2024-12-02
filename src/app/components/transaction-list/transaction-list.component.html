@@ -16,7 +16,6 @@
           </div>
         </div>
 
-        <!-- İşlem özetleri -->
         <div class="card-body">
           <div class="summary-box mb-4">
             <div class="row">
@@ -47,14 +46,13 @@
             </div>
           </div>
 
-          <!-- İşlem listesi -->
           <div class="table-responsive">
-            <div class="member-group mb-4" *ngFor="let memberId of groupedTransactions | keyvalue">
+            <div class="member-group mb-4" *ngFor="let memberId of orderedMemberIds">
               <div class="d-flex justify-content-between align-items-center bg-light p-3 mb-2">
-                <h6 class="mb-0">{{ groupedTransactions[memberId.key][0].memberName }}</h6>
+                <h6 class="mb-0">{{ groupedTransactions[memberId][0].memberName }}</h6>
                 <div class="d-flex align-items-center">
-                  <span class="me-3 total-amount">Toplam Borç: {{ memberTotals[memberId.key] | currency:'TRY':'symbol-narrow':'1.2-2' }}</span>
-                  <button class="btn btn-primary" *ngIf="memberTotals[memberId.key] > 0" (click)="updateAllMemberPayments(memberId.key)">
+                  <span class="me-3 total-amount">Toplam Borç: {{ memberTotals[memberId] | currency:'TRY':'symbol-narrow':'1.2-2' }}</span>
+                  <button class="btn btn-primary" *ngIf="memberTotals[memberId] > 0" (click)="updateAllMemberPayments(memberId)">
                     Tümünü Öde
                   </button>
                 </div>
@@ -73,7 +71,7 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr *ngFor="let transaction of groupedTransactions[memberId.key]">
+                  <tr *ngFor="let transaction of groupedTransactions[memberId]">
                     <td>{{ transaction.productName || "-" }}</td>
                     <td>{{ transaction.quantity }}</td>
                     <td>{{ transaction.unitPrice | currency:'TRY':'symbol-narrow':'1.2-2' }}</td>
