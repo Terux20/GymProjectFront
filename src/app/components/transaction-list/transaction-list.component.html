@@ -1,5 +1,5 @@
 <div class="container mt-4">
-  <div class="d-flex justify-content-center align-items-center" *ngIf="isLoading" style="height: 100vh;">
+  <div class="d-flex justify-content-center align-items-center" *ngIf="isLoading">
     <app-loading-spinner></app-loading-spinner>
   </div>
 
@@ -8,15 +8,28 @@
       <div class="card">
         <div class="card-header d-flex justify-content-between align-items-center">
           <h5 class="card-title mb-0">İşlem Geçmişi</h5>
-          
-          <div class="month-filter">
-            <input type="month" class="form-control" 
-                   [(ngModel)]="selectedMonth" 
-                   (change)="filterByMonth()">
+          <div class="d-flex gap-3 align-items-center">
+            <div class="search-container">
+              <input 
+                [formControl]="searchControl"
+                class="form-control"
+                placeholder="Üye adı ile ara..."
+                type="text"
+              >
+            </div>
+            <div class="month-filter">
+              <input 
+                type="month" 
+                class="form-control" 
+                [(ngModel)]="selectedMonth"
+                (change)="filterByMonth()"
+              >
+            </div>
           </div>
         </div>
 
         <div class="card-body">
+          <!-- Özet Kutular -->
           <div class="summary-box mb-4">
             <div class="row">
               <div class="col-md-4">
@@ -47,48 +60,76 @@
           </div>
 
           <div class="table-responsive">
-            <div class="member-group mb-4" *ngFor="let memberId of orderedMemberIds">
+            <div class="member-group mb-4" *ngFor="let member of transactionsByMember">
+              <!-- Üye Başlığı ve Özeti -->
               <div class="d-flex justify-content-between align-items-center bg-light p-3 mb-2">
-                <h6 class="mb-0">{{ groupedTransactions[memberId][0].memberName }}</h6>
+                <h6 class="mb-0">{{ member.memberName }}</h6>
+                
                 <div class="d-flex align-items-center">
-                  <span class="me-3 total-amount">Toplam Borç: {{ memberTotals[memberId] | currency:'TRY':'symbol-narrow':'1.2-2' }}</span>
-                  <button class="btn btn-primary" *ngIf="memberTotals[memberId] > 0" (click)="updateAllMemberPayments(memberId)">
+                  <!-- Ürün Özeti -->
+                  <div class="product-summary me-3" *ngIf="member.totalDebt > 0">
+                    <div class="d-flex flex-wrap gap-2">
+                      <div *ngFor="let product of member.productSummary | keyvalue" 
+                           class="badge rounded-pill bg-info text-dark">
+                        {{product.key}}: {{product.value.quantity}} adet
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Toplam Borç ve Ödeme Butonu -->
+                  <span class="me-3 total-amount" *ngIf="member.totalDebt > 0">
+                    Toplam Borç: {{ member.totalDebt | currency:'TRY':'symbol-narrow':'1.2-2' }}
+                  </span>
+                  <button 
+                    class="btn btn-outline-primary btn-sm"
+                    (click)="updateAllMemberPayments(member.memberId)"
+                    *ngIf="member.totalDebt > 0">
                     Tümünü Öde
                   </button>
                 </div>
               </div>
 
-              <table class="table">
-                <thead>
+              <!-- İşlem Tablosu -->
+              <table class="table table-hover">
+                <thead class="table-light">
                   <tr>
                     <th>Ürün</th>
-                    <th>Adet</th>
-                    <th>Birim Fiyat</th>
-                    <th>Toplam Fiyat</th>
+                    <th class="text-center">Adet</th>
+                    <th class="text-end">Birim Fiyat</th>
+                    <th class="text-end">Toplam Fiyat</th>
                     <th>İşlem Türü</th>
                     <th>Tarih</th>
-                    <th>Ödeme Durumu</th>
+                    <th class="text-center">Ödeme Durumu</th>
                   </tr>
                 </thead>
                 <tbody>
-                  <tr *ngFor="let transaction of groupedTransactions[memberId]">
+                  <tr *ngFor="let transaction of member.transactions">
                     <td>{{ transaction.productName || "-" }}</td>
-                    <td>{{ transaction.quantity }}</td>
-                    <td>{{ transaction.unitPrice | currency:'TRY':'symbol-narrow':'1.2-2' }}</td>
-                    <td>{{ transaction.amount | currency:'TRY':'symbol-narrow':'1.2-2' }}</td>
+                    <td class="text-center">{{ transaction.quantity }}</td>
+                    <td class="text-end">{{ transaction.unitPrice | currency:'TRY':'symbol-narrow':'1.2-2' }}</td>
+                    <td class="text-end">{{ transaction.amount | currency:'TRY':'symbol-narrow':'1.2-2' }}</td>
                     <td>{{ transaction.transactionType }}</td>
                     <td>{{ transaction.transactionDate | date:'dd/MM/yyyy HH:mm:ss' }}</td>
-                    <td>
-                      <span [class]="getStatusClass(transaction)"
-                            (click)="updatePaymentStatus(transaction)"
-                            [style.cursor]="transaction.transactionType === 'Bakiye Yükleme' || transaction.isPaid ? 'default' : 'pointer'"
-                            [style.pointerEvents]="transaction.transactionType === 'Bakiye Yükleme' || transaction.isPaid ? 'none' : 'auto'">
+                    <td class="text-center">
+                      <span
+                        [class]="getStatusClass(transaction)"
+                        (click)="updatePaymentStatus(transaction)"
+                        [style.cursor]="transaction.transactionType === 'Bakiye Yükleme' || transaction.isPaid ? 'default' : 'pointer'"
+                        [style.pointer-events]="transaction.transactionType === 'Bakiye Yükleme' || transaction.isPaid ? 'none' : 'auto'">
                         {{ getPaymentStatus(transaction) }}
                       </span>
                     </td>
                   </tr>
                 </tbody>
               </table>
+            </div>
+
+            <!-- Sonuç bulunamadı mesajı -->
+            <div *ngIf="transactionsByMember.length === 0" class="text-center py-5">
+              <div class="text-muted">
+                <i class="fas fa-search me-2"></i>
+                Sonuç bulunamadı
+              </div>
             </div>
           </div>
         </div>

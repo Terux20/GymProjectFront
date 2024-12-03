@@ -15,9 +15,21 @@ interface MemberTotals {
   [key: string]: number;
 }
 
-interface MemberLastTransaction {
+interface ProductSummary {
+  quantity: number;
+  totalAmount: number;
+}
+
+interface MemberProductSummary {
+  [productName: string]: ProductSummary;
+}
+
+interface TransactionsByMember {
   memberId: string;
-  lastTransactionDate: Date;
+  memberName: string;
+  transactions: Transaction[];
+  productSummary: MemberProductSummary;
+  totalDebt: number;
 }
 
 @Component({
@@ -35,6 +47,9 @@ export class TransactionListComponent implements OnInit {
   memberTotals: MemberTotals = {};
   selectedMonth: string = '';
   orderedMemberIds: string[] = [];
+  memberProductSummaries: { [memberId: string]: MemberProductSummary } = {};
+  transactionsByMember: TransactionsByMember[] = [];
+  currentSearchText: string = '';
 
   constructor(
     private transactionService: TransactionService,
@@ -43,8 +58,81 @@ export class TransactionListComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.getTransactions();
     this.initializeMonthFilter();
+    this.setupSearchSubscription();
+    this.getTransactions();
+  }
+
+  private setupSearchSubscription(): void {
+    this.searchControl.valueChanges
+      .pipe(debounceTime(300))
+      .subscribe(value => {
+        this.currentSearchText = value || '';
+        this.filterTransactions(this.currentSearchText);
+      });
+  }
+
+  private filterTransactions(searchText: string): void {
+    if (!searchText) {
+      this.filteredTransactions = [...this.transactions];
+    } else {
+      const lowerSearchText = searchText.toLowerCase();
+      this.filteredTransactions = this.transactions.filter(transaction =>
+        transaction.memberName.toLowerCase().includes(lowerSearchText)
+      );
+    }
+    this.groupTransactionsByMember();
+    this.calculateMemberTotals();
+    this.calculateProductSummaries();
+    this.prepareTransactionsByMember();
+  }
+
+  private prepareTransactionsByMember(): void {
+    this.transactionsByMember = this.orderedMemberIds.map(memberId => {
+      const transactions = this.groupedTransactions[memberId];
+      const memberName = transactions[0].memberName;
+      const productSummary = this.memberProductSummaries[memberId] || {};
+      const totalDebt = this.memberTotals[memberId] || 0;
+
+      return {
+        memberId,
+        memberName,
+        transactions,
+        productSummary,
+        totalDebt
+      };
+    });
+  }
+
+  private calculateProductSummaries(): void {
+    this.memberProductSummaries = {};
+    
+    Object.keys(this.groupedTransactions).forEach(memberId => {
+      const memberTransactions = this.groupedTransactions[memberId]
+        .filter(t => !t.isPaid && t.transactionType !== 'Bakiye Yükleme' && t.productName);
+      
+      if (memberTransactions.length > 0) {
+        const summary: MemberProductSummary = {};
+        
+        memberTransactions.forEach(transaction => {
+          if (!transaction.productName) return;
+          
+          if (!summary[transaction.productName]) {
+            summary[transaction.productName] = {
+              quantity: 0,
+              totalAmount: 0
+            };
+          }
+          
+          if (typeof transaction.quantity === 'number') {
+            summary[transaction.productName].quantity += transaction.quantity;
+          }
+          summary[transaction.productName].totalAmount += transaction.amount;
+        });
+        
+        this.memberProductSummaries[memberId] = summary;
+      }
+    });
   }
 
   initializeMonthFilter() {
@@ -61,6 +149,10 @@ export class TransactionListComponent implements OnInit {
           quantity: transaction.transactionType === 'Bakiye Yükleme' ? '-' : transaction.quantity
         }));
         this.filterByMonth();
+        // Mevcut aramanın korunması
+        if (this.currentSearchText) {
+          this.filterTransactions(this.currentSearchText);
+        }
         this.isLoading = false;
       },
       error: (error) => {
@@ -81,15 +173,21 @@ export class TransactionListComponent implements OnInit {
     } else {
       this.filteredTransactions = this.transactions;
     }
-    this.groupTransactionsByMember();
-    this.calculateMemberTotals();
+
+    // Mevcut aramanın korunması
+    if (this.currentSearchText) {
+      this.filterTransactions(this.currentSearchText);
+    } else {
+      this.groupTransactionsByMember();
+      this.calculateMemberTotals();
+      this.calculateProductSummaries();
+      this.prepareTransactionsByMember();
+    }
   }
 
   groupTransactionsByMember() {
-    // Reset groupedTransactions
     this.groupedTransactions = {};
     
-    // Group transactions by member
     this.filteredTransactions.forEach(transaction => {
       const key = transaction.memberID.toString();
       if (!this.groupedTransactions[key]) {
@@ -98,26 +196,16 @@ export class TransactionListComponent implements OnInit {
       this.groupedTransactions[key].push(transaction);
     });
 
-    // Find last transaction date for each member
-    const memberLastTransactions: MemberLastTransaction[] = Object.keys(this.groupedTransactions).map(memberId => {
-      const transactions = this.groupedTransactions[memberId];
-      const lastTransactionDate = new Date(Math.max(
-        ...transactions.map(t => new Date(t.transactionDate).getTime())
-      ));
-      return {
-        memberId,
-        lastTransactionDate
-      };
+    this.orderedMemberIds = Object.keys(this.groupedTransactions).sort((a, b) => {
+      const aTransactions = this.groupedTransactions[a];
+      const bTransactions = this.groupedTransactions[b];
+      const aLatest = Math.max(...aTransactions.map(t => new Date(t.transactionDate).getTime()));
+      const bLatest = Math.max(...bTransactions.map(t => new Date(t.transactionDate).getTime()));
+      return bLatest - aLatest;
     });
 
-    // Sort members by their last transaction date (descending)
-    this.orderedMemberIds = memberLastTransactions
-      .sort((a, b) => b.lastTransactionDate.getTime() - a.lastTransactionDate.getTime())
-      .map(m => m.memberId);
-
-    // Sort each member's transactions by date (descending)
-    Object.keys(this.groupedTransactions).forEach(memberId => {
-      this.groupedTransactions[memberId].sort((a, b) => 
+    Object.keys(this.groupedTransactions).forEach(key => {
+      this.groupedTransactions[key].sort((a, b) => 
         new Date(b.transactionDate).getTime() - new Date(a.transactionDate).getTime()
       );
     });
@@ -131,6 +219,14 @@ export class TransactionListComponent implements OnInit {
         .filter(t => !t.isPaid && t.transactionType !== 'Bakiye Yükleme')
         .reduce((sum, t) => sum + t.amount, 0);
     });
+  }
+
+  getProductSummary(memberId: string): MemberProductSummary | null {
+    return this.memberProductSummaries[memberId] || null;
+  }
+
+  getMemberTotalDebt(memberId: string): number {
+    return this.memberTotals[memberId] || 0;
   }
 
   updatePaymentStatus(transaction: Transaction) {
@@ -173,19 +269,21 @@ export class TransactionListComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result && result.confirmed) {
-        unpaidTransactions.forEach(transaction => {
-          this.processPayment(transaction);
+        unpaidTransactions.forEach((transaction, index) => {
+          this.processPayment(transaction, index === unpaidTransactions.length - 1);
         });
       }
     });
   }
 
-  private processPayment(transaction: Transaction) {
+  private processPayment(transaction: Transaction, isLastPayment: boolean = true) {
     this.isLoading = true;
     this.transactionService.updatePaymentStatus(transaction.transactionID).subscribe({
       next: (response) => {
-        this.toastrService.success('Ödeme durumu güncellendi', 'Başarılı');
-        this.getTransactions();
+        if (isLastPayment) {
+          this.toastrService.success('Ödeme durumu güncellendi', 'Başarılı');
+          this.getTransactions();
+        }
       },
       error: (error) => {
         this.toastrService.error('Ödeme durumu güncellenirken bir hata oluştu', 'Hata');

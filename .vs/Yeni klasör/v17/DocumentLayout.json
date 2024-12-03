@@ -1,0 +1,37 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\ibrah\\Desktop\\Yeni klas\u00F6r\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\ibrah\\Desktop\\Yeni klas\u00F6r\\src\\app\\components\\transaction-list\\transaction-list.component.ts||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:src\\app\\components\\transaction-list\\transaction-list.component.ts||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 0,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "transaction-list.component.ts",
+              "DocumentMoniker": "C:\\Users\\ibrah\\Desktop\\Yeni klas\u00F6r\\src\\app\\components\\transaction-list\\transaction-list.component.ts",
+              "RelativeDocumentMoniker": "src\\app\\components\\transaction-list\\transaction-list.component.ts",
+              "ToolTip": "C:\\Users\\ibrah\\Desktop\\Yeni klas\u00F6r\\src\\app\\components\\transaction-list\\transaction-list.component.ts",
+              "RelativeToolTip": "src\\app\\components\\transaction-list\\transaction-list.component.ts",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003213|",
+              "WhenOpened": "2024-12-03T11:21:49.926Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
