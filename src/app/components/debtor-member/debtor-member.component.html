@@ -1,44 +1,39 @@
+<!-- debtor-member.component.html -->
 <div class="container mt-4">
-  <div
-    *ngIf="isLoading"
-    class="d-flex justify-content-center align-items-center"
-    style="height: 100vh"
-  >
+  <div *ngIf="isLoading" class="d-flex justify-content-center align-items-center" style="height: 100vh;">
     <app-loading-spinner></app-loading-spinner>
   </div>
 
   <div class="row" [class.content-blur]="isLoading">
     <div class="col-12">
       <div class="card">
-        <div class="card-body">
+        <div class="card-header">
           <h5 class="card-title">Borçlu Üyeler</h5>
-
-          <table class="table table-striped table-bordered">
-            <thead class="thead-dark">
+        </div>
+        <div class="card-body">
+          <table class="table table-striped">
+            <thead>
               <tr>
-                <th>Adı</th>
+                <th>Üye Adı</th>
                 <th>Telefon</th>
-                <th>Borç</th>
+                <th>Toplam Borç</th>
+                <th>Kalan Borç</th>
+                <th>Son Güncelleme</th>
                 <th>İşlem</th>
               </tr>
             </thead>
             <tbody>
-              <tr *ngFor="let debtorMember of debtorMembers">
-                <td>{{ debtorMember.name }}</td>
-                <td>{{ debtorMember.phoneNumber }}</td>
+              <tr *ngFor="let debt of debtorMembers">
+                <td>{{ debt.memberName }}</td>
+                <td>{{ debt.phoneNumber }}</td>
+                <td>{{ debt.originalAmount | currency:'TRY':'symbol-narrow':'1.2-2' }}</td>
+                <td>{{ debt.remainingAmount | currency:'TRY':'symbol-narrow':'1.2-2' }}</td>
+                <td>{{ debt.lastUpdateDate | date:'dd/MM/yyyy HH:mm' }}</td>
                 <td>
-                  {{
-                    debtorMember.paymentAmount
-                      | currency : "TRY" : "symbol-narrow" : "1.2-2"
-                  }}
-                </td>
-                <td>
-                  <button
-                    type="button"
-                    class="btn btn-outline-primary btn-sm"
-                    (click)="openConfirmDialog(debtorMember)"
-                  >
-                    <fa-icon [icon]="faEdit" class="mr-1"></fa-icon> Güncelle
+                  <button 
+                    class="btn btn-primary btn-sm"
+                    (click)="openPaymentDialog(debt)">
+                    Ödeme Al
                   </button>
                 </td>
               </tr>

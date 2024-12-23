@@ -82,9 +82,7 @@
               {{ type.branch }} ({{ branchCounts[type.branch] || 0 }})
             </label>
           </div>
-
           <hr />
-
           <div class="active-members-box text-center">
             <p class="active-members-count">{{ totalActiveMembers }}</p>
             <p class="active-members-label">Toplam Aktif Üye Sayınız</p>
@@ -101,7 +99,7 @@
           <div class="mb-3">
             <div class="wrap-input-1">
               <input
-                type="text" 
+                type="text"
                 class="input"
                 [ngModel]="memberFilterText"
                 (ngModelChange)="searchTextChanged($event)"

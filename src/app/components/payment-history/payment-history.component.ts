@@ -4,6 +4,7 @@ import { PaymentHistory } from '../../models/paymentHistory';
 import { ToastrService } from 'ngx-toastr';
 import { Subject } from 'rxjs';
 import { debounceTime, takeUntil } from 'rxjs/operators';
+import { DebtPaymentService } from '../../services/debt-payment-service.service';
 
 @Component({
   selector: 'app-payment-history',
@@ -34,7 +35,8 @@ export class PaymentHistoryComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
 
   constructor(
-    private paymentHistoryService: PaymentHistoryService,
+    private paymentHistoryService: PaymentHistoryService,   
+    private debtPaymentService: DebtPaymentService,  
     private toastrService: ToastrService
   ) {
     this.setCurrentMonthDates();
@@ -109,6 +111,7 @@ export class PaymentHistoryComponent implements OnInit, OnDestroy {
           this.totalCash = response.data.cash;
           this.totalCreditCard = response.data.creditCard;
           this.totalTransfer = response.data.transfer;
+          this.totalDebt = response.data.debt;
           this.totalAmount = response.data.total;
         }
       },
@@ -137,26 +140,35 @@ export class PaymentHistoryComponent implements OnInit, OnDestroy {
     }
   }
 
-  deletePayment(paymentHistory: PaymentHistory) {
-    const message = `${paymentHistory.name} adlı üyenin yaptığı ödemeyi silmek istediğinizden emin misiniz?`;
-    
-    if (confirm(message)) {
+  deletePayment(payment: PaymentHistory) {
+    if (confirm(`Bu ödeme kaydını silmek istediğinizden emin misiniz?`)) {
       this.isLoading = true;
-      this.paymentHistoryService.delete(paymentHistory.paymentID).subscribe({
-        next: (response) => {
-          if (response.success) {
-            this.toastrService.success(response.message, 'Başarılı');
+
+      // Borç ödemesi mi kontrol et
+      if (payment.paymentMethod.includes('Borç Ödemesi')) {
+        this.debtPaymentService.delete(payment.paymentID).subscribe({
+          next: (response) => {
+            this.toastrService.success('Borç ödemesi başarıyla silindi');
             this.loadPayments();
-          } else {
-            this.toastrService.error(response.message, 'Hata');
+          },
+          error: (error) => {
+            this.toastrService.error('Borç ödemesi silinirken bir hata oluştu');
+            this.isLoading = false;
           }
-          this.isLoading = false;
-        },
-        error: (error) => {
-          this.toastrService.error('Ödeme silinirken bir hata oluştu.', 'Hata');
-          this.isLoading = false;
-        }
-      });
+        });
+      } else {
+        this.paymentHistoryService.delete(payment.paymentID).subscribe({
+          next: (response) => {
+            this.toastrService.success('Ödeme başarıyla silindi');
+            this.loadPayments();
+          },
+          error: (error) => {
+            this.toastrService.error('Ödeme silinirken bir hata oluştu');
+            this.isLoading = false;
+          }
+        });
+      }
     }
   }
+
 }

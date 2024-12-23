@@ -3,4 +3,5 @@ export interface PaymentTotals {
     creditCard: number;
     transfer: number;
     total: number;
+    debt: number;
   }

@@ -6,6 +6,7 @@ export interface PaymentHistory {
   membershipType: string;
   branch: string;
   name: string;
-  isActive: boolean;
   phoneNumber: string;
+  isActive: boolean;
+  currentRemainingAmount: number;
 }

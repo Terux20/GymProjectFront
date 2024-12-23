@@ -75,6 +75,7 @@ import { OperationClaimComponent } from './components/operation-claim/operation-
 import { UserOperationClaimComponent } from './components/user-operation-claim/user-operation-claim.component';
 import { MatIconModule } from '@angular/material/icon';
 import { TransactionPaymentDialogComponent } from './components/transaction-payment-dialog/transaction-payment-dialog.component';
+import { DebtPaymentDialogComponent } from './components/debt-payment-dialog/debt-payment-dialog.component';
 registerLocaleData(localeTr);
 
 @NgModule({
@@ -125,7 +126,8 @@ registerLocaleData(localeTr);
     UserCompanyUpdateComponent,
     OperationClaimComponent,
     UserOperationClaimComponent,
-    TransactionPaymentDialogComponent
+    TransactionPaymentDialogComponent,
+    DebtPaymentDialogComponent
   ],
   imports: [
     BrowserModule,
