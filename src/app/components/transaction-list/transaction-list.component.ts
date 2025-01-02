@@ -1,3 +1,5 @@
+// transaction-list.component.ts
+
 import { Component, OnInit } from '@angular/core';
 import { TransactionService } from '../../services/transaction.service';
 import { Transaction } from '../../models/transaction';
@@ -39,6 +41,8 @@ interface TransactionsByMember {
 })
 export class TransactionListComponent implements OnInit {
   transactions: Transaction[] = [];
+  paidTransactions: Transaction[] = [];
+  unpaidTransactions: Transaction[] = [];
   isLoading: boolean = false;
   searchControl = new FormControl('');
   filteredTransactions: Transaction[] = [];
@@ -50,6 +54,9 @@ export class TransactionListComponent implements OnInit {
   memberProductSummaries: { [memberId: string]: MemberProductSummary } = {};
   transactionsByMember: TransactionsByMember[] = [];
   currentSearchText: string = '';
+  showPaidTransactions: boolean = false;
+  startDate: Date | null = null;
+  endDate: Date | null = null;
 
   constructor(
     private transactionService: TransactionService,
@@ -58,7 +65,6 @@ export class TransactionListComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.initializeMonthFilter();
     this.setupSearchSubscription();
     this.getTransactions();
   }
@@ -72,19 +78,48 @@ export class TransactionListComponent implements OnInit {
       });
   }
 
+  toggleTransactionView() {
+    this.showPaidTransactions = !this.showPaidTransactions;
+    this.filterTransactions(this.currentSearchText);
+  }
+
   private filterTransactions(searchText: string): void {
-    if (!searchText) {
-      this.filteredTransactions = [...this.transactions];
-    } else {
+    let filteredList = this.showPaidTransactions ? this.paidTransactions : this.unpaidTransactions;
+
+    if (searchText) {
       const lowerSearchText = searchText.toLowerCase();
-      this.filteredTransactions = this.transactions.filter(transaction =>
+      filteredList = filteredList.filter(transaction =>
         transaction.memberName.toLowerCase().includes(lowerSearchText)
       );
     }
+
+    if (this.startDate && this.endDate) {
+      const start = new Date(this.startDate);
+      const end = new Date(this.endDate);
+      start.setHours(0, 0, 0, 0);
+      end.setHours(23, 59, 59, 999);
+
+      filteredList = filteredList.filter(transaction => {
+        const transDate = new Date(transaction.transactionDate);
+        return transDate >= start && transDate <= end;
+      });
+    }
+
+    this.filteredTransactions = filteredList;
     this.groupTransactionsByMember();
     this.calculateMemberTotals();
     this.calculateProductSummaries();
     this.prepareTransactionsByMember();
+  }
+
+  onDateFilterChange() {
+    this.filterTransactions(this.currentSearchText);
+  }
+
+  clearDateFilter() {
+    this.startDate = null;
+    this.endDate = null;
+    this.filterTransactions(this.currentSearchText);
   }
 
   private prepareTransactionsByMember(): void {
@@ -135,56 +170,6 @@ export class TransactionListComponent implements OnInit {
     });
   }
 
-  initializeMonthFilter() {
-    const today = new Date();
-    this.selectedMonth = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}`;
-  }
-
-  getTransactions() {
-    this.isLoading = true;
-    this.transactionService.getTransactionsWithDetails().subscribe({
-      next: (response) => {
-        this.transactions = response.data.map(transaction => ({
-          ...transaction,
-          quantity: transaction.transactionType === 'Bakiye Yükleme' ? '-' : transaction.quantity
-        }));
-        this.filterByMonth();
-        // Mevcut aramanın korunması
-        if (this.currentSearchText) {
-          this.filterTransactions(this.currentSearchText);
-        }
-        this.isLoading = false;
-      },
-      error: (error) => {
-        this.toastrService.error('İşlem geçmişi yüklenirken bir hata oluştu', 'Hata');
-        this.isLoading = false;
-      }
-    });
-  }
-
-  filterByMonth() {
-    if (this.selectedMonth) {
-      const [year, month] = this.selectedMonth.split('-');
-      this.filteredTransactions = this.transactions.filter(transaction => {
-        const transactionDate = new Date(transaction.transactionDate);
-        return transactionDate.getFullYear() === parseInt(year) && 
-               transactionDate.getMonth() === parseInt(month) - 1;
-      });
-    } else {
-      this.filteredTransactions = this.transactions;
-    }
-
-    // Mevcut aramanın korunması
-    if (this.currentSearchText) {
-      this.filterTransactions(this.currentSearchText);
-    } else {
-      this.groupTransactionsByMember();
-      this.calculateMemberTotals();
-      this.calculateProductSummaries();
-      this.prepareTransactionsByMember();
-    }
-  }
-
   groupTransactionsByMember() {
     this.groupedTransactions = {};
     
@@ -208,6 +193,33 @@ export class TransactionListComponent implements OnInit {
       this.groupedTransactions[key].sort((a, b) => 
         new Date(b.transactionDate).getTime() - new Date(a.transactionDate).getTime()
       );
+    });
+  }
+
+  getTransactions() {
+    this.isLoading = true;
+    this.transactionService.getTransactionsWithDetails().subscribe({
+      next: (response) => {
+        this.transactions = response.data.map(transaction => ({
+          ...transaction,
+          quantity: transaction.transactionType === 'Bakiye Yükleme' ? '-' : transaction.quantity
+        }));
+
+        this.paidTransactions = this.transactions.filter(t => t.isPaid);
+        this.unpaidTransactions = this.transactions.filter(t => !t.isPaid);
+
+        this.filteredTransactions = this.unpaidTransactions;
+        this.groupTransactionsByMember();
+        this.calculateMemberTotals();
+        this.calculateProductSummaries();
+        this.prepareTransactionsByMember();
+        
+        this.isLoading = false;
+      },
+      error: (error) => {
+        this.toastrService.error('İşlem geçmişi yüklenirken bir hata oluştu', 'Hata');
+        this.isLoading = false;
+      }
     });
   }
 
@@ -279,7 +291,7 @@ export class TransactionListComponent implements OnInit {
             });
         }
     });
-}
+  }
 
   private processPayment(transaction: Transaction, isLastPayment: boolean = true) {
     this.isLoading = true;
@@ -301,7 +313,7 @@ export class TransactionListComponent implements OnInit {
     if (transaction.transactionType === 'Bakiye Yükleme') {
       return 'Tamamlandı';
     }
-    return transaction.isPaid ? 'Ödendi' : 'Ödenmedi';
+    return transaction.isPaid ? 'Ödendi' : 'Öde';
   }
 
   getStatusClass(transaction: Transaction): string {
