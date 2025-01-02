@@ -250,31 +250,36 @@ export class TransactionListComponent implements OnInit {
   }
 
   updateAllMemberPayments(memberId: string) {
-    const unpaidTransactions = this.groupedTransactions[memberId]
-      .filter(t => !t.isPaid && t.transactionType !== 'Bakiye Yükleme');
-    
-    if (unpaidTransactions.length === 0) {
-      return;
+    const totalDebt = this.memberTotals[memberId] || 0;
+
+    if (totalDebt <= 0) {
+        return;
     }
 
-    const totalAmount = unpaidTransactions.reduce((sum, t) => sum + t.amount, 0);
-
     const dialogRef = this.dialog.open(TransactionPaymentDialogComponent, {
-      width: '300px',
-      data: {
-        title: 'Toplu Ödeme Onayı',
-        message: `Toplam ${totalAmount}₺ tutarındaki tüm ödemeleri onaylıyor musunuz?`
-      }
+        width: '300px',
+        data: {
+            title: 'Toplu Ödeme Onayı',
+            message: `Toplam ${totalDebt}₺ tutarındaki tüm ödemeleri onaylıyor musunuz?`
+        }
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      if (result && result.confirmed) {
-        unpaidTransactions.forEach((transaction, index) => {
-          this.processPayment(transaction, index === unpaidTransactions.length - 1);
-        });
-      }
+        if (result && result.confirmed) {
+            this.isLoading = true;
+            this.transactionService.updateAllPaymentStatus(memberId).subscribe({
+                next: (response) => {
+                    this.toastrService.success('Tüm ödemeler başarıyla yapıldı');
+                    this.getTransactions();
+                },
+                error: (error) => {
+                    this.toastrService.error('Ödemeler yapılırken bir hata oluştu', 'Hata');
+                    this.isLoading = false;
+                }
+            });
+        }
     });
-  }
+}
 
   private processPayment(transaction: Transaction, isLastPayment: boolean = true) {
     this.isLoading = true;
