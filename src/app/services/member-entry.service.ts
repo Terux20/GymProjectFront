@@ -7,7 +7,7 @@ import { MemberEntry } from '../models/memberEntry';
 import { BaseApiService } from './baseApiService';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class MemberEntryService extends BaseApiService {
   constructor(private httpClient: HttpClient) {
@@ -15,6 +15,13 @@ export class MemberEntryService extends BaseApiService {
   }
 
   getTodayEntries(date: string): Observable<ListResponseModel<MemberEntry>> {
-    return this.httpClient.get<ListResponseModel<MemberEntry>>(`${this.apiUrl}member/gettodayentries?date=${date}`);
+    return this.httpClient.get<ListResponseModel<MemberEntry>>(
+      `${this.apiUrl}member/gettodayentries?date=${date}`
+    );
   }
+getMemberEntriesBySearch(searchText: string): Observable<ListResponseModel<MemberEntry>> {
+  return this.httpClient.get<ListResponseModel<MemberEntry>>(
+      `${this.apiUrl}member/getmemberentriesbysearch?searchText=${searchText}`
+  );
+}
 }

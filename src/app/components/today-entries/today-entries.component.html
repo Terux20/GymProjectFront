@@ -1,29 +1,97 @@
 <div class="container mt-4">
-  <div *ngIf="isLoading" class="d-flex justify-content-center align-items-center" style="height: 100vh;">
+  <div
+    *ngIf="isLoading"
+    class="d-flex justify-content-center align-items-center"
+    style="height: 100vh"
+  >
     <app-loading-spinner></app-loading-spinner>
   </div>
 
   <div [class.content-blur]="isLoading">
-    <h2>Bugün Gelen Üyeler ({{ selectedDate | date:'dd/MM/yyyy' }})</h2>
-    
-    <div class="mb-3">
-      <label for="dateFilter" class="form-label">Tarih Seçin:</label>
-      <input type="date" id="dateFilter" class="form-control" [(ngModel)]="selectedDate" (change)="onDateChange()">
+    <h2>Giriş-Çıkış Geçmişi({{ selectedDate | date : "dd/MM/yyyy" }})</h2>
+
+    <div class="row mb-3">
+      <div class="col-md-6">
+        <label for="dateFilter" class="form-label">Tarih Seçin:</label>
+        <input
+          type="date"
+          id="dateFilter"
+          class="form-control"
+          [(ngModel)]="selectedDate"
+          (change)="onDateChange()"
+        />
+      </div>
+      <div class="col-md-6">
+        <label for="searchFilter" class="form-label">Üye Ara:</label>
+        <div class="input-group">
+          <input
+            type="text"
+            class="form-control"
+            [matAutocomplete]="auto"
+            [formControl]="memberControl"
+            placeholder="İsim veya telefon numarası ile arama yapın..."
+          />
+          <mat-autocomplete
+            #auto="matAutocomplete"
+            [displayWith]="displayMember"
+          >
+            <mat-option
+              *ngFor="let member of filteredMembers | async"
+              [value]="member"
+            >
+              {{ member.name }} - {{ member.phoneNumber }}
+            </mat-option>
+          </mat-autocomplete>
+          <div class="input-group-append">
+            <button
+              class="btn btn-primary"
+              type="button"
+              (click)="searchMember()"
+            >
+              <i class="fas fa-search"></i> Ara
+            </button>
+            <button
+              class="btn btn-outline-secondary"
+              type="button"
+              *ngIf="memberControl.value"
+              (click)="clearSearch()"
+            >
+              <i class="fas fa-times"></i> Temizle
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
-  
+
     <table class="table table-striped">
       <thead>
         <tr>
           <th>Üye Adı</th>
           <th>Telefon</th>
-          <th>Giriş Saati</th>
+          <th>Giriş Tarihi</th>
+          <th>Giriş Saati</th>  <th>Çıkış Saati</th>
+          <th>Spor Süresi</th>
         </tr>
       </thead>
       <tbody>
         <tr *ngFor="let entry of entries">
           <td>{{ entry.name }}</td>
           <td>{{ entry.phoneNumber }}</td>
+          <td>{{ entry.entryTime | date:'dd/MM/yyyy' }}</td>
           <td>{{ entry.entryTime | date:'HH:mm:ss' }}</td>
+          <td>
+            <span *ngIf="entry.exitTime">{{ entry.exitTime | date:'HH:mm:ss' }}</span>
+            <span *ngIf="!entry.exitTime" class="text-success">-</span>
+          </td>
+          <td>
+            <span *ngIf="entry.exitTime">
+              {{ calculateDuration(entry.entryTime, entry.exitTime) }}
+            </span>
+            <span *ngIf="!entry.exitTime">-</span>
+          </td>
+        </tr>
+        <tr *ngIf="entries.length === 0">
+          <td colspan="6" class="text-center">Kayıt bulunamadı</td>
         </tr>
       </tbody>
     </table>
