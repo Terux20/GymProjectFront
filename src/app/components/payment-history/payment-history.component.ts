@@ -2,14 +2,23 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { PaymentHistoryService } from '../../services/payment-history.service';
 import { PaymentHistory } from '../../models/paymentHistory';
 import { ToastrService } from 'ngx-toastr';
-import { Subject } from 'rxjs';
-import { debounceTime, takeUntil } from 'rxjs/operators';
+import { FormControl } from '@angular/forms';
+import { Observable, Subject, of } from 'rxjs';
+import {
+  map,
+  startWith,
+  debounceTime,
+  distinctUntilChanged,
+  switchMap,
+} from 'rxjs/operators';
+import { MemberService } from '../../services/member.service';
+import { Member } from '../../models/member';
 import { DebtPaymentService } from '../../services/debt-payment-service.service';
 
 @Component({
   selector: 'app-payment-history',
   templateUrl: './payment-history.component.html',
-  styleUrls: ['./payment-history.component.css']
+  styleUrls: ['./payment-history.component.css'],
 })
 export class PaymentHistoryComponent implements OnInit, OnDestroy {
   paymentHistories: PaymentHistory[] = [];
@@ -18,49 +27,52 @@ export class PaymentHistoryComponent implements OnInit, OnDestroy {
   totalTransfer: number = 0;
   totalDebt: number = 0;
   totalAmount: number = 0;
-  filterText: string = '';
   startDate: string = '';
   endDate: string = '';
   currentPage: number = 1;
   totalPages: number = 0;
   totalItems: number = 0;
-  itemsPerPage: number = 50; // Default 50 yapıldı
+  itemsPerPage: number = 50;
   isLoading: boolean = false;
+  selectedMonth: string = '';
+
+  memberSearchControl = new FormControl();
+  filteredMembers: Observable<Member[]>;
+  members: Member[] = [];
+  private searchTerms = new Subject<string>();
 
   currentMonthStart: Date;
   currentMonthEnd: Date;
   isFiltered: boolean = false;
-
-  private filterSubject = new Subject<string>();
-  private destroy$ = new Subject<void>();
+  selectedMember: Member | null = null;
 
   constructor(
-    private paymentHistoryService: PaymentHistoryService,   
-    private debtPaymentService: DebtPaymentService,  
+    private paymentHistoryService: PaymentHistoryService,
+    private memberService: MemberService,
+    private debtPaymentService: DebtPaymentService,
     private toastrService: ToastrService
   ) {
     this.setCurrentMonthDates();
 
-    // Debounce için subscription
-    this.filterSubject
-      .pipe(
-        debounceTime(1000),
-        takeUntil(this.destroy$)
-      )
-      .subscribe(() => {
-        this.currentPage = 1;
-        this.isFiltered = this.filterText !== '' || this.startDate !== '' || this.endDate !== '';
-        this.loadPayments();
-      });
+    // Arama işlemi için debounce ekle
+    this.searchTerms.pipe(
+      debounceTime(300),
+      distinctUntilChanged()
+    ).subscribe(term => {
+      if (term) {
+        this.filterMembers(term);
+      }
+    });
   }
 
   ngOnInit(): void {
+    this.loadMembers();
+    this.setupMemberAutocomplete();
     this.loadPayments();
   }
 
   ngOnDestroy(): void {
-    this.destroy$.next();
-    this.destroy$.complete();
+    this.searchTerms.complete();
   }
 
   setCurrentMonthDates() {
@@ -69,56 +81,95 @@ export class PaymentHistoryComponent implements OnInit, OnDestroy {
     this.currentMonthEnd = new Date(now.getFullYear(), now.getMonth() + 1, 0);
   }
 
-  loadPayments() {
-    this.isLoading = true;
-
-    const parameters = {
-      pageNumber: this.currentPage,
-      pageSize: this.itemsPerPage,
-      searchText: this.filterText || '',
-      startDate: this.startDate ? new Date(this.startDate) : undefined,
-      endDate: this.endDate ? new Date(this.endDate) : undefined
-    };
-
-    this.paymentHistoryService.getPaymentHistoryPaginated(parameters).subscribe({
+  private loadMembers() {
+    this.memberService.getMembers().subscribe({
       next: (response) => {
-        if (response.success) {
-          this.paymentHistories = response.data.data;
-          this.totalPages = response.data.totalPages;
-          this.totalItems = response.data.totalCount;
-          this.loadTotals();
-        }
-        this.isLoading = false;
+        this.members = response.data;
       },
       error: (error) => {
-        console.error('Error loading payments:', error);
-        this.toastrService.error('Ödeme geçmişi yüklenirken bir hata oluştu.', 'Hata');
-        this.isLoading = false;
+        this.toastrService.error('Üyeler yüklenirken bir hata oluştu', 'Hata');
+      },
+    });
+  }
+
+  onSearchInput(event: any) {
+    const term = event.target.value;
+    if (term && term.length >= 2) {
+      this.searchTerms.next(term);
+    }
+  }
+
+  private filterMembers(searchText: string) {
+    this.filteredMembers = of(this.members.filter(member =>
+      member.name.toLowerCase().includes(searchText.toLowerCase()) ||
+      member.phoneNumber.includes(searchText)
+    ));
+  }
+
+  onMemberSelected(event: any) {
+    const selectedMember = event.option.value;
+    this.selectedMember = selectedMember;
+    this.loadMemberPayments(selectedMember);
+  }
+
+  displayMemberFn(member: Member): string {
+    return member ? `${member.name} - ${member.phoneNumber}` : '';
+  }
+
+  private setupMemberAutocomplete() {
+    this.filteredMembers = this.memberSearchControl.valueChanges.pipe(
+      startWith(''),
+      map(value => {
+        if (typeof value === 'string') {
+          return value;
+        }
+        return value?.name || '';
+      }),
+      map(name => this._filterMembers(name))
+    );
+
+    this.memberSearchControl.valueChanges.subscribe((value) => {
+      if (!value) {
+        this.selectedMember = null;
+        this.loadPayments();
+      } else if (value && typeof value === 'object') {
+        this.loadMemberPayments(value);
       }
     });
   }
 
-  loadTotals() {
+  private _filterMembers(value: string): Member[] {
+    const filterValue = value.toLowerCase();
+    return this.members.filter(
+      (member) =>
+        member.name.toLowerCase().includes(filterValue) ||
+        member.phoneNumber.toLowerCase().includes(filterValue)
+    );
+  }
+
+  private loadMemberPayments(member: Member) {
+    this.currentPage = 1;
     const parameters = {
-      searchText: this.filterText || '',
+      pageNumber: this.currentPage,
+      pageSize: this.itemsPerPage,
+      searchText: member.name,
       startDate: this.startDate ? new Date(this.startDate) : undefined,
-      endDate: this.endDate ? new Date(this.endDate) : undefined
+      endDate: this.endDate ? new Date(this.endDate) : undefined,
     };
 
-    this.paymentHistoryService.getPaymentTotals(parameters).subscribe({
-      next: (response) => {
-        if (response.success) {
-          this.totalCash = response.data.cash;
-          this.totalCreditCard = response.data.creditCard;
-          this.totalTransfer = response.data.transfer;
-          this.totalDebt = response.data.debt;
-          this.totalAmount = response.data.total;
-        }
-      },
-      error: (error) => {
-        console.error('Error loading totals:', error);
-      }
-    });
+    this.totalCash = 0;
+    this.totalCreditCard = 0;
+    this.totalTransfer = 0;
+    this.totalDebt = 0;
+    this.totalAmount = 0;
+
+    this.loadPayments(parameters);
+  }
+
+  onFilterChange(): void {
+    this.currentPage = 1;
+    this.isFiltered = this.startDate !== '' || this.endDate !== '';
+    this.loadPayments();
   }
 
   onPageChange(page: number): void {
@@ -128,23 +179,115 @@ export class PaymentHistoryComponent implements OnInit, OnDestroy {
     }
   }
 
-  onFilterChange(): void {
-    this.filterSubject.next(this.filterText);
+  loadPayments(parameters?: any) {
+    this.isLoading = true;
+
+    if (!parameters) {
+      parameters = {
+        pageNumber: this.currentPage,
+        pageSize: this.itemsPerPage,
+        searchText: this.selectedMember?.name || '',
+        startDate: this.startDate ? new Date(this.startDate) : undefined,
+        endDate: this.endDate ? new Date(this.endDate) : undefined
+      };
+    }
+
+    this.paymentHistoryService.getPaymentHistoryPaginated(parameters).subscribe({
+      next: (response) => {
+        if (response.success) {
+          this.paymentHistories = response.data.data;
+          this.totalPages = response.data.totalPages;
+          this.totalItems = response.data.totalCount;
+
+          if (parameters.searchText) {
+            this.calculateTotalsFromCurrentData();
+          } else {
+            this.loadTotals(parameters);
+          }
+        }
+        this.isLoading = false;
+      },
+      error: (error) => {
+        this.toastrService.error('Ödeme geçmişi yüklenirken bir hata oluştu.', 'Hata');
+        this.isLoading = false;
+      }
+    });
+  }
+
+  private calculateTotalsFromCurrentData() {
+    this.totalCash = this.paymentHistories
+      .filter(p => p.paymentMethod === 'Nakit')
+      .reduce((sum, payment) => sum + payment.paymentAmount, 0);
+
+    this.totalCreditCard = this.paymentHistories
+      .filter(p => p.paymentMethod === 'Kredi Kartı')
+      .reduce((sum, payment) => sum + payment.paymentAmount, 0);
+
+    this.totalTransfer = this.paymentHistories
+      .filter(p => p.paymentMethod === 'Havale - EFT')
+      .reduce((sum, payment) => sum + payment.paymentAmount, 0);
+
+    this.totalDebt = this.paymentHistories
+      .filter(p => p.paymentMethod.includes('Borç'))
+      .reduce((sum, payment) => sum + payment.paymentAmount, 0);
+
+    this.totalAmount = this.totalCash + this.totalCreditCard + this.totalTransfer;
+  }
+
+  loadTotals(parameters: any) {
+    if (this.selectedMember) {
+      this.totalCash = this.paymentHistories
+        .filter((p) => p.paymentMethod === 'Nakit')
+        .reduce((sum, payment) => sum + payment.paymentAmount, 0);
+
+      this.totalCreditCard = this.paymentHistories
+        .filter((p) => p.paymentMethod === 'Kredi Kartı')
+        .reduce((sum, payment) => sum + payment.paymentAmount, 0);
+
+      this.totalTransfer = this.paymentHistories
+        .filter((p) => p.paymentMethod === 'Havale - EFT')
+        .reduce((sum, payment) => sum + payment.paymentAmount, 0);
+
+      this.totalDebt = this.paymentHistories
+        .filter((p) => p.paymentMethod.includes('Borç'))
+        .reduce((sum, payment) => sum + payment.paymentAmount, 0);
+
+      this.totalAmount = this.totalCash + this.totalCreditCard + this.totalTransfer;
+    } else {
+      this.paymentHistoryService.getPaymentTotals(parameters).subscribe({
+        next: (response) => {
+          if (response.success) {
+            this.totalCash = response.data.cash;
+            this.totalCreditCard = response.data.creditCard;
+            this.totalTransfer = response.data.transfer;
+            this.totalDebt = response.data.debt;
+            this.totalAmount = response.data.total;
+          }
+        },
+        error: (error) => {
+          console.error('Error loading totals:', error);
+        },
+      });
+    }
   }
 
   getTotalValuesTitle(): string {
+    if (this.selectedMember) {
+      return `Toplam Değerler (${this.selectedMember.name})`;
+    }
     if (this.isFiltered) {
       return 'Toplam Değerler (Filtrelenmiş)';
-    } else {
-      return `Toplam Değerler (${this.currentMonthStart.toLocaleString('default', { month: 'long' })} ${this.currentMonthStart.getFullYear()})`;
     }
+    return `Toplam Değerler (${this.currentMonthStart.toLocaleString(
+      'default',
+      { month: 'long' }
+    )} ${this.currentMonthStart.getFullYear()})`;
   }
 
   deletePayment(payment: PaymentHistory) {
     if (confirm(`Bu ödeme kaydını silmek istediğinizden emin misiniz?`)) {
       this.isLoading = true;
 
-      // Borç ödemesi mi kontrol et
       if (payment.paymentMethod.includes('Borç Ödemesi')) {
         this.debtPaymentService.delete(payment.paymentID).subscribe({
           next: (response) => {
@@ -154,7 +297,7 @@ export class PaymentHistoryComponent implements OnInit, OnDestroy {
           error: (error) => {
             this.toastrService.error('Borç ödemesi silinirken bir hata oluştu');
             this.isLoading = false;
-          }
+          },
         });
       } else {
         this.paymentHistoryService.delete(payment.paymentID).subscribe({
@@ -165,10 +308,16 @@ export class PaymentHistoryComponent implements OnInit, OnDestroy {
           error: (error) => {
             this.toastrService.error('Ödeme silinirken bir hata oluştu');
             this.isLoading = false;
-          }
+          },
         });
       }
     }
   }
 
+  getCurrentMonthText(): string {
+    if (!this.selectedMonth) return '';
+    const [year, month] = this.selectedMonth.split('-');
+    const date = new Date(parseInt(year), parseInt(month) - 1);
+    return date.toLocaleString('tr-TR', { month: 'long', year: 'numeric' });
+  }
 }
