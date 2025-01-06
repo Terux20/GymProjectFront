@@ -24,11 +24,23 @@ export class MemberQRCodeComponent {
   memberInfo: MemberQRInfo | null = null;
   message: string = '';
   isError: boolean = false;
-  isLoading: boolean = false;
   showLookupButton: boolean = true;
   lastQueriedNumber: string = '';
+  isLoading: boolean = false;
 
   constructor(private memberService: MemberService) {}
+
+  formatPhoneNumber(number: string): string {
+    // Telefon numarasındaki tüm boşlukları ve özel karakterleri kaldır
+    let cleaned = number.replace(/\D/g, '');
+    
+    // Eğer numara 10 haneliyse başına 0 ekle
+    if (cleaned.length === 10) {
+      cleaned = '0' + cleaned;
+    }
+    
+    return cleaned;
+  }
 
   lookupMember() {
     if (!this.phoneNumber) {
@@ -38,11 +50,16 @@ export class MemberQRCodeComponent {
       return;
     }
 
+    // Telefon numarasını formatla
+    let formattedPhoneNumber = this.formatPhoneNumber(this.phoneNumber);
+
+    
+
     this.isLoading = true;
     this.showLookupButton = false;
-    this.lastQueriedNumber = this.phoneNumber;
+    this.lastQueriedNumber = formattedPhoneNumber;
 
-    this.memberService.getMemberQRInfo(this.phoneNumber).subscribe({
+    this.memberService.getMemberQRInfo(formattedPhoneNumber).subscribe({
       next: (response: any) => {
         if (response.success) {
           this.memberInfo = response.data;
