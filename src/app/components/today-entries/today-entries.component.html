@@ -1,14 +1,44 @@
 <div class="container mt-4">
-  <div
-    *ngIf="isLoading"
-    class="d-flex justify-content-center align-items-center"
-    style="height: 100vh"
-  >
+  <div *ngIf="isLoading" class="d-flex justify-content-center align-items-center" style="height: 100vh;">
     <app-loading-spinner></app-loading-spinner>
   </div>
 
   <div [class.content-blur]="isLoading">
-    <h2>Giriş-Çıkış Geçmişi({{ selectedDate | date : "dd/MM/yyyy" }})</h2>
+    <!-- Toplam Ziyaretçi Kartı -->
+    <div class="card mb-4 bg-gradient-primary text-white">
+      <div class="card-body text-center">
+        <h5 class="card-title mb-0">Günlük Toplam Ziyaretçi</h5>
+        <div class="display-4 font-weight-bold">{{ getTotalVisitorsToday() }}</div>
+        <p class="mb-0">{{ selectedDate | date : "dd/MM/yyyy" }}</p>
+      </div>
+    </div>
+
+    <!-- Üye İstatistikleri Kartı -->
+    <div class="card mb-4" *ngIf="selectedMember">
+      <div class="card-body">
+        <h5 class="card-title">{{ selectedMember.name }} - İstatistikler</h5>
+        <div class="row">
+          <div class="col-md-4">
+            <div class="stat-item">
+              <span class="stat-label">Aylık Ziyaret</span>
+              <span class="stat-value">{{ memberStats.monthlyVisits }}</span>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="stat-item">
+              <span class="stat-label">Ortalama Kalış</span>
+              <span class="stat-value">{{ memberStats.averageStayTime }} dk</span>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="stat-item">
+              <span class="stat-label">Son Ziyaret</span>
+              <span class="stat-value">{{ memberStats.lastVisit | date:'dd/MM/yyyy HH:mm' }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
 
     <div class="row mb-3">
       <div class="col-md-6">
@@ -43,19 +73,10 @@
             </mat-option>
           </mat-autocomplete>
           <div class="input-group-append">
-            <button
-              class="btn btn-primary"
-              type="button"
-              (click)="searchMember()"
-            >
+            <button class="btn btn-primary" type="button" (click)="searchMember()">
               <i class="fas fa-search"></i> Ara
             </button>
-            <button
-              class="btn btn-outline-secondary"
-              type="button"
-              *ngIf="memberControl.value"
-              (click)="clearSearch()"
-            >
+            <button class="btn btn-outline-secondary" type="button" *ngIf="memberControl.value" (click)="clearSearch()">
               <i class="fas fa-times"></i> Temizle
             </button>
           </div>
@@ -63,37 +84,43 @@
       </div>
     </div>
 
-    <table class="table table-striped">
-      <thead>
-        <tr>
-          <th>Üye Adı</th>
-          <th>Telefon</th>
-          <th>Giriş Tarihi</th>
-          <th>Giriş Saati</th>  <th>Çıkış Saati</th>
-          <th>Spor Süresi</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let entry of entries">
-          <td>{{ entry.name }}</td>
-          <td>{{ entry.phoneNumber }}</td>
-          <td>{{ entry.entryTime | date:'dd/MM/yyyy' }}</td>
-          <td>{{ entry.entryTime | date:'HH:mm:ss' }}</td>
-          <td>
-            <span *ngIf="entry.exitTime">{{ entry.exitTime | date:'HH:mm:ss' }}</span>
-            <span *ngIf="!entry.exitTime" class="text-success">-</span>
-          </td>
-          <td>
-            <span *ngIf="entry.exitTime">
-              {{ calculateDuration(entry.entryTime, entry.exitTime) }}
-            </span>
-            <span *ngIf="!entry.exitTime">-</span>
-          </td>
-        </tr>
-        <tr *ngIf="entries.length === 0">
-          <td colspan="6" class="text-center">Kayıt bulunamadı</td>
-        </tr>
-      </tbody>
-    </table>
+    <div class="table-responsive">
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>Üye Adı</th>
+            <th>Telefon</th>
+            <th>Giriş Tarihi</th>
+            <th>Giriş Saati</th>
+            <th>Çıkış Saati</th>
+            <th>Spor Süresi</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let entry of entries">
+            <td>{{ entry.name }}</td>
+            <td>{{ entry.phoneNumber }}</td>
+            <td>{{ entry.entryTime | date:'dd/MM/yyyy' }}</td>
+            <td>{{ entry.entryTime | date:'HH:mm:ss' }}</td>
+            <td>
+              <span *ngIf="entry.exitTime && !shouldShowQRWarning(entry)">
+                {{ entry.exitTime | date:'HH:mm:ss' }}
+              </span>
+              <span *ngIf="shouldShowQRWarning(entry)" class="text-danger">
+                QR Okutulmadı
+              </span>
+              <span *ngIf="!entry.exitTime" class="text-success">-</span>
+            </td>
+            <td>
+              {{ entry.exitTime ? calculateDuration(entry.entryTime, entry.exitTime) : '-' }}
+            </td>
+           
+          </tr>
+          <tr *ngIf="entries.length === 0">
+            <td colspan="7" class="text-center">Kayıt bulunamadı</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </div>
 </div>

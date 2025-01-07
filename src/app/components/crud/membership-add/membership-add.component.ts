@@ -158,30 +158,37 @@ export class MembershipAddComponent implements OnInit {
 
   getLastMembershipInfo(memberId: number) {
     this.membershipService.getLastMembershipInfo(memberId).subscribe(
-        (response) => {
-            if (response.success) {
-                const data = response.data;
-                if (data.lastEndDate) {
-                    const lastEndDate = new Date(data.lastEndDate);
-                    if (data.isActive) {
-                        this.lastMembershipInfo = `Müşterinin üyeliğinin >bitmesine ${data.daysRemaining} gün var (${lastEndDate.toLocaleDateString()})`;
-                    } else if (data.daysRemaining < 0) {
-                        const daysSinceEnd = Math.abs(data.daysRemaining);
-                        this.lastMembershipInfo = `Müşterinin son üyeliği ${daysSinceEnd} gün önce bitti (${lastEndDate.toLocaleDateString()})`;
-                    }
-                } else {
-                    this.lastMembershipInfo = 'Bu üyenin daha önce üyeliği bulunmamaktadır.';
-                }
-            } else {
-                this.lastMembershipInfo = 'Üyelik bilgisi alınamadı.';
+      (response) => {
+        if (response.success) {
+          const data = response.data;
+          if (data.lastEndDate) {
+            const lastEndDate = new Date(data.lastEndDate);
+            if (data.isActive) {
+              this.lastMembershipInfo = `Müşterinin üyeliğinin bitmesine ${
+                data.daysRemaining
+              } gün var. (${lastEndDate.toLocaleDateString()})`;
+            } else if (data.daysRemaining === 0) {
+              const daysSinceEnd = Math.abs(data.daysRemaining);
+              this.lastMembershipInfo = `Müşterinin üyeliği bugün bitti. (${lastEndDate.toLocaleDateString()})`;
+            } else if (data.daysRemaining < 0) {
+              const daysSinceEnd = Math.abs(data.daysRemaining);
+              this.lastMembershipInfo = `Müşterinin son üyeliği ${daysSinceEnd} gün önce bitti. (${lastEndDate.toLocaleDateString()})`;
             }
-        },
-        (error) => {
-            console.error('Error fetching last membership info', error);
-            this.toastrService.error('Üyelik bilgileri alınamadı', 'Hata');
+          } else {
+            this.lastMembershipInfo =
+              'Bu üyenin daha önce üyeliği bulunmamaktadır.';
+          }
+        } else {
+          this.lastMembershipInfo = 'Üyelik bilgisi alınamadı.';
         }
+      },
+      (error) => {
+        console.error('Error fetching last membership info', error);
+        this.toastrService.error('Üyelik bilgileri alınamadı', 'Hata');
+      }
     );
-}
+  }
+
 
   add() {
     this.calculateEndDate();
