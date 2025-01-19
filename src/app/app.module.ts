@@ -153,7 +153,8 @@ registerLocaleData(localeTr);
     MatNativeDateModule,
     MatIconModule,
     QRCodeModule,
-    NgxPaginationModule
+    NgxPaginationModule,
+    
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
