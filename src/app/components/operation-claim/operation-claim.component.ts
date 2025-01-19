@@ -6,9 +6,10 @@ import { OperationClaimService } from '../../services/operation-claim.service';
 import { OperationClaim } from '../../models/operationClaim';
 
 @Component({
-  selector: 'app-operation-claim',
-  templateUrl: './operation-claim.component.html',
-  styleUrls: ['./operation-claim.component.css']
+    selector: 'app-operation-claim',
+    templateUrl: './operation-claim.component.html',
+    styleUrls: ['./operation-claim.component.css'],
+    standalone: false
 })
 export class OperationClaimComponent implements OnInit {
   operationClaims: OperationClaim[] = [];

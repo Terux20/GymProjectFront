@@ -12,9 +12,10 @@ import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 
 @Component({
-  selector: 'app-member-filter',
-  templateUrl: './member-filter.component.html',
-  styleUrls: ['./member-filter.component.css'],
+    selector: 'app-member-filter',
+    templateUrl: './member-filter.component.html',
+    styleUrls: ['./member-filter.component.css'],
+    standalone: false
 })
 export class MemberFilterComponent implements OnInit, OnDestroy {
   members: MemberFilter[] = [];

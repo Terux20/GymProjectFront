@@ -2,7 +2,8 @@ import { Pipe, PipeTransform } from '@angular/core';
 import { MemberFilter } from '../models/memberFilter';
 
 @Pipe({
-  name: 'memberFilterPipe'
+    name: 'memberFilterPipe',
+    standalone: false
 })
 export class MemberFilterPipePipe implements PipeTransform {
 

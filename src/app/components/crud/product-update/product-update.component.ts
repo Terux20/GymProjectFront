@@ -4,9 +4,10 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Product } from '../../../models/product';
 
 @Component({
-  selector: 'app-product-update',
-  templateUrl: './product-update.component.html',
-  styleUrls: ['./product-update.component.css']
+    selector: 'app-product-update',
+    templateUrl: './product-update.component.html',
+    styleUrls: ['./product-update.component.css'],
+    standalone: false
 })
 export class ProductUpdateComponent {
   updateForm: FormGroup;

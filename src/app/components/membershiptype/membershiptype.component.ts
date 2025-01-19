@@ -9,9 +9,10 @@ import { MembershiptypeUpdateComponent } from '../crud/membershiptype-update/mem
 import { faTrashAlt, faEdit } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
-  selector: 'app-membershiptype',
-  templateUrl: './membershiptype.component.html',
-  styleUrls: ['./membershiptype.component.css']
+    selector: 'app-membershiptype',
+    templateUrl: './membershiptype.component.html',
+    styleUrls: ['./membershiptype.component.css'],
+    standalone: false
 })
 export class MembershiptypeComponent implements OnInit {
   membershipTypes: MembershipType[] = [];

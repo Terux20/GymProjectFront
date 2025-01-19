@@ -6,9 +6,10 @@ import { CompanyUser } from '../../../models/companyUser';
 import { Company } from '../../../models/company';
 
 @Component({
-  selector: 'app-user-company-update',
-  templateUrl: './user-company-update.component.html',
-  styleUrls: ['./user-company-update.component.css']
+    selector: 'app-user-company-update',
+    templateUrl: './user-company-update.component.html',
+    styleUrls: ['./user-company-update.component.css'],
+    standalone: false
 })
 export class UserCompanyUpdateComponent implements OnInit {
   updateForm: FormGroup;

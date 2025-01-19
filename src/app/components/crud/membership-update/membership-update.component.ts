@@ -6,9 +6,10 @@ import { ToastrService } from 'ngx-toastr';
 import { ResponseModel } from '../../../models/responseModel';
 
 @Component({
-  selector: 'app-membership-update',
-  templateUrl: './membership-update.component.html',
-  styleUrls: ['./membership-update.component.css']
+    selector: 'app-membership-update',
+    templateUrl: './membership-update.component.html',
+    styleUrls: ['./membership-update.component.css'],
+    standalone: false
 })
 export class MembershipUpdateComponent implements OnInit {
   updateForm: FormGroup;

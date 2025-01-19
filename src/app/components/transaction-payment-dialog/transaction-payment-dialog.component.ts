@@ -2,8 +2,8 @@ import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 @Component({
-  selector: 'app-transaction-payment-dialog',
-  template: `
+    selector: 'app-transaction-payment-dialog',
+    template: `
     <h2 mat-dialog-title>{{ data.title }}</h2>
     <mat-dialog-content>
       <p>{{ data.message }}</p>
@@ -14,7 +14,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
       <button mat-button [mat-dialog-close]="{ confirmed: true, paymentMethod: selectedPaymentMethod }" >Onayla</button>
     </mat-dialog-actions>
   `,
-  styles: [`
+    styles: [`
     mat-form-field {
       width: 100%;
       margin: 16px 0;
@@ -23,7 +23,8 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
       justify-content: flex-end;
       gap: 8px;
     }
-  `]
+  `],
+    standalone: false
 })
 export class TransactionPaymentDialogComponent {
   selectedPaymentMethod: string;

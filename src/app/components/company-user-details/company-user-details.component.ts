@@ -4,9 +4,10 @@ import { CompanyUserDetailService } from '../../services/company-user-detail.ser
 import { ActivatedRoute } from '@angular/router';
 
 @Component({
-  selector: 'app-company-user-details',
-  templateUrl: './company-user-details.component.html',
-  styleUrls: ['./company-user-details.component.css'],
+    selector: 'app-company-user-details',
+    templateUrl: './company-user-details.component.html',
+    styleUrls: ['./company-user-details.component.css'],
+    standalone: false
 })
 export class CompanyUserDetailsComponent implements OnInit {
   companyUserDetails: CompanyDetail[] = [];

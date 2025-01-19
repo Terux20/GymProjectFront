@@ -3,9 +3,10 @@ import { AuthService } from '../../services/auth.service';
 import { Router } from '@angular/router';
 
 @Component({
-  selector: 'app-navi',
-  templateUrl: './navi.component.html',
-  styleUrls: ['./navi.component.css']
+    selector: 'app-navi',
+    templateUrl: './navi.component.html',
+    styleUrls: ['./navi.component.css'],
+    standalone: false
 })
 export class NaviComponent implements OnInit {
   isOwner: boolean = false;

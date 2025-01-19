@@ -9,9 +9,10 @@ import { OperationClaim } from '../../models/operationClaim';
 import { User } from '../../models/user';
 
 @Component({
-  selector: 'app-user-operation-claim',
-  templateUrl: './user-operation-claim.component.html',
-  styleUrls: ['./user-operation-claim.component.css']
+    selector: 'app-user-operation-claim',
+    templateUrl: './user-operation-claim.component.html',
+    styleUrls: ['./user-operation-claim.component.css'],
+    standalone: false
 })
 export class UserOperationClaimComponent implements OnInit {
   userOperationClaims: UserOperationClaimDto[] = [];

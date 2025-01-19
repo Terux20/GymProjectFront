@@ -2,8 +2,8 @@
 import { Component } from '@angular/core';
 
 @Component({
-  selector: 'app-loading-spinner',
-  template: `
+    selector: 'app-loading-spinner',
+    template: `
     <svg
       class="container"
       viewBox="0 0 40 40"
@@ -30,7 +30,7 @@ import { Component } from '@angular/core';
       />
     </svg>
   `,
-  styles: [`
+    styles: [`
     :host {
       display: flex;
       justify-content: center;
@@ -88,6 +88,7 @@ import { Component } from '@angular/core';
         stroke-dashoffset: -100;
       }
     }
-  `]
+  `],
+    standalone: false
 })
 export class LoadingSpinnerComponent {}

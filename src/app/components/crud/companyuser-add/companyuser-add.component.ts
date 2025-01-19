@@ -16,9 +16,10 @@ import { Observable } from 'rxjs';
 import { startWith, map } from 'rxjs/operators';
 
 @Component({
-  selector: 'app-companyuser-add',
-  templateUrl: './companyuser-add.component.html',
-  styleUrls: ['./companyuser-add.component.css'],
+    selector: 'app-companyuser-add',
+    templateUrl: './companyuser-add.component.html',
+    styleUrls: ['./companyuser-add.component.css'],
+    standalone: false
 })
 export class CompanyuserAddComponent implements OnInit {
   companyUserAddForm: FormGroup;

@@ -17,9 +17,10 @@ import { Observable } from 'rxjs';
 import { startWith, map } from 'rxjs/operators';
 
 @Component({
-  selector: 'app-companyadress-add',
-  templateUrl: './companyadress-add.component.html',
-  styleUrls: ['./companyadress-add.component.css']
+    selector: 'app-companyadress-add',
+    templateUrl: './companyadress-add.component.html',
+    styleUrls: ['./companyadress-add.component.css'],
+    standalone: false
 })
 export class CompanyadressAddComponent implements OnInit {
   companyAdressAddForm: FormGroup;

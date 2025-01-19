@@ -9,9 +9,10 @@ import { ToastrService } from 'ngx-toastr';
 import { MemberEntry } from '../../models/memberEntry';
 
 @Component({
-  selector: 'app-today-entries',
-  templateUrl: './today-entries.component.html',
-  styleUrls: ['./today-entries.component.css']
+    selector: 'app-today-entries',
+    templateUrl: './today-entries.component.html',
+    styleUrls: ['./today-entries.component.css'],
+    standalone: false
 })
 export class TodayEntriesComponent implements OnInit {
   entries: MemberEntry[] = [];

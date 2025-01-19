@@ -4,9 +4,10 @@ import { MemberRemainingDayService } from '../../services/member-remaining-day.s
 import { ToastrService } from 'ngx-toastr';
 
 @Component({
-  selector: 'app-member-remaining-day',
-  templateUrl: './member-remaining-day.component.html',
-  styleUrls: ['./member-remaining-day.component.css'],
+    selector: 'app-member-remaining-day',
+    templateUrl: './member-remaining-day.component.html',
+    styleUrls: ['./member-remaining-day.component.css'],
+    standalone: false
 })
 export class MemberRemainingDayComponent implements OnInit {
   memberRemainingDays: memberRemainingDay[] = [];

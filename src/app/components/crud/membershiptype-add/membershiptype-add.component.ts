@@ -4,9 +4,10 @@ import { MembershipTypeService } from '../../../services/membership-type.service
 import { ToastrService } from 'ngx-toastr';
 
 @Component({
-  selector: 'app-membershiptype-add',
-  templateUrl: './membershiptype-add.component.html',
-  styleUrls: ['./membershiptype-add.component.css'],
+    selector: 'app-membershiptype-add',
+    templateUrl: './membershiptype-add.component.html',
+    styleUrls: ['./membershiptype-add.component.css'],
+    standalone: false
 })
 export class MembershiptypeAddComponent implements OnInit {
   membershipTypeAddForm: FormGroup;

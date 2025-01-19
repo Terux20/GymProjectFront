@@ -16,9 +16,10 @@ import { Member } from '../../models/member';
 import { DebtPaymentService } from '../../services/debt-payment-service.service';
 
 @Component({
-  selector: 'app-payment-history',
-  templateUrl: './payment-history.component.html',
-  styleUrls: ['./payment-history.component.css'],
+    selector: 'app-payment-history',
+    templateUrl: './payment-history.component.html',
+    styleUrls: ['./payment-history.component.css'],
+    standalone: false
 })
 export class PaymentHistoryComponent implements OnInit, OnDestroy {
   paymentHistories: PaymentHistory[] = [];

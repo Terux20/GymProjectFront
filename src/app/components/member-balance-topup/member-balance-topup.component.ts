@@ -10,9 +10,10 @@ import { MatDialog } from '@angular/material/dialog';
 import { UpdateBalanceDialogComponent } from '../update-balance-dialog/update-balance-dialog.component';
 
 @Component({
-  selector: 'app-member-balance-topup',
-  templateUrl: './member-balance-topup.component.html',
-  styleUrls: ['./member-balance-topup.component.css']
+    selector: 'app-member-balance-topup',
+    templateUrl: './member-balance-topup.component.html',
+    styleUrls: ['./member-balance-topup.component.css'],
+    standalone: false
 })
 export class MemberBalanceTopupComponent implements OnInit {
   topupForm: FormGroup;

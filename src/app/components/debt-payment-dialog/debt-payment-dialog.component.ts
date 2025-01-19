@@ -5,8 +5,8 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { RemainingDebtDetail } from '../../models/RemainingDebtDetail'; 
 
 @Component({
-  selector: 'app-debt-payment-dialog',
-  template: `
+    selector: 'app-debt-payment-dialog',
+    template: `
     <h2 mat-dialog-title>Ödeme Al</h2>
     <mat-dialog-content>
       <form [formGroup]="paymentForm">
@@ -51,11 +51,12 @@ import { RemainingDebtDetail } from '../../models/RemainingDebtDetail';
       </button>
     </mat-dialog-actions>
   `,
-  styles: [`
+    styles: [`
     mat-form-field {
       margin-bottom: 1rem;
     }
-  `]
+  `],
+    standalone: false
 })
 export class DebtPaymentDialogComponent {
   paymentForm: FormGroup;

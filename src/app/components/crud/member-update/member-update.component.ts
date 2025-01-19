@@ -5,9 +5,10 @@ import { ToastrService } from 'ngx-toastr';
 import { MemberService } from '../../../services/member.service';
 
 @Component({
-  selector: 'app-member-update',
-  templateUrl: './member-update.component.html',
-  styleUrls: ['./member-update.component.css']
+    selector: 'app-member-update',
+    templateUrl: './member-update.component.html',
+    styleUrls: ['./member-update.component.css'],
+    standalone: false
 })
 export class MemberUpdateComponent {
   updateForm: FormGroup;

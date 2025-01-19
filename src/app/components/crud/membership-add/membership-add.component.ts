@@ -10,9 +10,10 @@ import { MembershipType } from '../../../models/membershipType';
 import { MembershipTypeService } from '../../../services/membership-type.service';
 
 @Component({
-  selector: 'app-membership-add',
-  templateUrl: './membership-add.component.html',
-  styleUrls: ['./membership-add.component.css'],
+    selector: 'app-membership-add',
+    templateUrl: './membership-add.component.html',
+    styleUrls: ['./membership-add.component.css'],
+    standalone: false
 })
 export class MembershipAddComponent implements OnInit {
   membershipAddForm: FormGroup;

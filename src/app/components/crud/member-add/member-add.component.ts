@@ -89,9 +89,10 @@ import { MemberService } from '../../../services/member.service';
 import { ToastrService } from 'ngx-toastr';
 
 @Component({
-  selector: 'app-member-add',
-  templateUrl: './member-add.component.html',
-  styleUrls: ['./member-add.component.css'],
+    selector: 'app-member-add',
+    templateUrl: './member-add.component.html',
+    styleUrls: ['./member-add.component.css'],
+    standalone: false
 })
 export class MemberAddComponent implements OnInit {
   memberAddForm: FormGroup;

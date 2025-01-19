@@ -16,9 +16,10 @@ interface CartItem {
 }
 
 @Component({
-  selector: 'app-product-sale',
-  templateUrl: './product-sale.component.html',
-  styleUrls: ['./product-sale.component.css']
+    selector: 'app-product-sale',
+    templateUrl: './product-sale.component.html',
+    styleUrls: ['./product-sale.component.css'],
+    standalone: false
 })
 export class ProductSaleComponent implements OnInit {
   saleForm: FormGroup;

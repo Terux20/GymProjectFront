@@ -15,9 +15,10 @@ interface MemberQRInfo {
 }
 
 @Component({
-  selector: 'app-member-qrcode',
-  templateUrl: './member-qrcode.component.html',
-  styleUrls: ['./member-qrcode.component.css']
+    selector: 'app-member-qrcode',
+    templateUrl: './member-qrcode.component.html',
+    styleUrls: ['./member-qrcode.component.css'],
+    standalone: false
 })
 export class MemberQRCodeComponent {
   phoneNumber: string = '';

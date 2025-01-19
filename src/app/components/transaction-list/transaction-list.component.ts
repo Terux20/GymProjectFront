@@ -35,9 +35,10 @@ interface TransactionsByMember {
 }
 
 @Component({
-  selector: 'app-transaction-list',
-  templateUrl: './transaction-list.component.html',
-  styleUrls: ['./transaction-list.component.css']
+    selector: 'app-transaction-list',
+    templateUrl: './transaction-list.component.html',
+    styleUrls: ['./transaction-list.component.css'],
+    standalone: false
 })
 export class TransactionListComponent implements OnInit {
   transactions: Transaction[] = [];

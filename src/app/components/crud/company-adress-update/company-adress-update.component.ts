@@ -10,9 +10,10 @@ import { Town } from '../../../models/town';
 import { Company } from '../../../models/company';
 
 @Component({
-  selector: 'app-company-adress-update',
-  templateUrl: './company-adress-update.component.html',
-  styleUrls: ['./company-adress-update.component.css']
+    selector: 'app-company-adress-update',
+    templateUrl: './company-adress-update.component.html',
+    styleUrls: ['./company-adress-update.component.css'],
+    standalone: false
 })
 export class CompanyAdressUpdateComponent implements OnInit {
   updateForm: FormGroup;

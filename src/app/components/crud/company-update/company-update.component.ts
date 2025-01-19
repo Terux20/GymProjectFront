@@ -4,8 +4,8 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Company } from '../../../models/company';
 
 @Component({
-  selector: 'app-company-update',
-  template: `
+    selector: 'app-company-update',
+    template: `
     <h2 mat-dialog-title>Şirket Güncelle</h2>
     <mat-dialog-content>
       <form [formGroup]="updateForm">
@@ -21,7 +21,8 @@ import { Company } from '../../../models/company';
       <button mat-button (click)="onNoClick()">İptal</button>
       <button mat-button [disabled]="!updateForm.valid" (click)="onSubmit()">Güncelle</button>
     </mat-dialog-actions>
-  `
+  `,
+    standalone: false
 })
 export class CompanyUpdateComponent {
   updateForm: FormGroup;

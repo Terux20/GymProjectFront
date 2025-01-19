@@ -5,8 +5,8 @@ import { MemberService } from '../../services/member.service';
 import { ToastrService } from 'ngx-toastr';
 
 @Component({
-  selector: 'app-update-balance-dialog',
-  template: `
+    selector: 'app-update-balance-dialog',
+    template: `
     <h2 mat-dialog-title>Bakiye Güncelle</h2>
     <mat-dialog-content>
       <form [formGroup]="form">
@@ -19,7 +19,8 @@ import { ToastrService } from 'ngx-toastr';
       <button mat-button (click)="onNoClick()">İptal</button>
       <button mat-button [disabled]="!form.valid" (click)="onSubmit()">Güncelle</button>
     </mat-dialog-actions>
-  `
+  `,
+    standalone: false
 })
 export class UpdateBalanceDialogComponent {
   form: FormGroup;

@@ -55,7 +55,6 @@ import { LoginComponent } from './components/login/login.component';
 import { AuthInterceptor } from './interceptors/auth.interceptor';
 import { AppUnauthorizedComponent } from './components/app-unauthorized/app-unauthorized.component';
 import { MemberQRCodeComponent } from './components/member-qrcode/member-qrcode.component';
-import { QRCodeModule } from 'angularx-qrcode';
 import { DebtorMemberComponent } from './components/debtor-member/debtor-member.component';
 import { ConfirmationDialogComponent } from './components/confirmation-dialog/confirmation-dialog.component';
 import { TodayEntriesComponent } from './components/today-entries/today-entries.component';
@@ -76,6 +75,8 @@ import { UserOperationClaimComponent } from './components/user-operation-claim/u
 import { MatIconModule } from '@angular/material/icon';
 import { TransactionPaymentDialogComponent } from './components/transaction-payment-dialog/transaction-payment-dialog.component';
 import { DebtPaymentDialogComponent } from './components/debt-payment-dialog/debt-payment-dialog.component';
+import { QRCodeComponent } from 'angularx-qrcode';
+
 registerLocaleData(localeTr);
 
 @NgModule({
@@ -152,9 +153,8 @@ registerLocaleData(localeTr);
     MatDatepickerModule,
     MatNativeDateModule,
     MatIconModule,
-    QRCodeModule,
     NgxPaginationModule,
-    
+    QRCodeComponent
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },

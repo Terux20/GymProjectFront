@@ -7,9 +7,10 @@ import { MatDialog } from '@angular/material/dialog';
 import { DebtPaymentDialogComponent } from '../debt-payment-dialog/debt-payment-dialog.component';
 
 @Component({
-  selector: 'app-debtor-member',
-  templateUrl: './debtor-member.component.html',
-  styleUrls: ['./debtor-member.component.css']
+    selector: 'app-debtor-member',
+    templateUrl: './debtor-member.component.html',
+    styleUrls: ['./debtor-member.component.css'],
+    standalone: false
 })
 export class DebtorMemberComponent implements OnInit {
   debtorMembers: RemainingDebtDetail[] = [];

@@ -7,9 +7,10 @@ import { MembershipType } from '../../../models/membershipType';
 import { ResponseModel } from '../../../models/responseModel';
 
 @Component({
-  selector: 'app-membershiptype-update',
-  templateUrl: './membershiptype-update.component.html',
-  styleUrls: ['./membershiptype-update.component.css']
+    selector: 'app-membershiptype-update',
+    templateUrl: './membershiptype-update.component.html',
+    styleUrls: ['./membershiptype-update.component.css'],
+    standalone: false
 })
 export class MembershiptypeUpdateComponent {
   updateForm: FormGroup;

@@ -4,9 +4,10 @@ import { CityService } from '../../services/city.service';
 import { ListResponseModel } from '../../models/listResponseModel';
 
 @Component({
-  selector: 'app-city',
-  templateUrl: './city.component.html',
-  styleUrls: ['./city.component.css'],
+    selector: 'app-city',
+    templateUrl: './city.component.html',
+    styleUrls: ['./city.component.css'],
+    standalone: false
 })
 export class CityComponent implements OnInit {
   cities: City[] = [];

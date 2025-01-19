@@ -8,9 +8,10 @@ import { CompanyUpdateComponent } from '../company-update/company-update.compone
 import { faTrashAlt, faEdit } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
-  selector: 'app-company-add',
-  templateUrl: './company-add.component.html',
-  styleUrls: ['./company-add.component.css']
+    selector: 'app-company-add',
+    templateUrl: './company-add.component.html',
+    styleUrls: ['./company-add.component.css'],
+    standalone: false
 })
 export class CompanyAddComponent implements OnInit {
   companyAddForm: FormGroup;

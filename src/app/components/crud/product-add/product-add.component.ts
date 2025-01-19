@@ -4,9 +4,10 @@ import { ProductService } from '../../../services/product.service';
 import { ToastrService } from 'ngx-toastr';
 
 @Component({
-  selector: 'app-product-add',
-  templateUrl: './product-add.component.html',
-  styleUrls: ['./product-add.component.css']
+    selector: 'app-product-add',
+    templateUrl: './product-add.component.html',
+    styleUrls: ['./product-add.component.css'],
+    standalone: false
 })
 export class ProductAddComponent implements OnInit {
   productForm: FormGroup;

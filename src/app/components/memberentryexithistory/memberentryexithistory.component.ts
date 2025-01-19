@@ -4,9 +4,10 @@ import { memberEntryExitHistory } from '../../models/memberEntryExitHistory';
 import { ToastrService } from 'ngx-toastr';
 
 @Component({
-  selector: 'app-memberentryexithistory',
-  templateUrl: './memberentryexithistory.component.html',
-  styleUrl: './memberentryexithistory.component.css'
+    selector: 'app-memberentryexithistory',
+    templateUrl: './memberentryexithistory.component.html',
+    styleUrl: './memberentryexithistory.component.css',
+    standalone: false
 })
 export class MemberentryexithistoryComponent implements OnInit {
   memberEntryExitHistories: memberEntryExitHistory[] = [];

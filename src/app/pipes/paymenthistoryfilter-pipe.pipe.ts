@@ -2,7 +2,8 @@ import { Pipe, PipeTransform } from '@angular/core';
 import { PaymentHistory } from '../models/paymentHistory';
 
 @Pipe({
-  name: 'paymenthistoryfilterPipe'
+    name: 'paymenthistoryfilterPipe',
+    standalone: false
 })
 export class PaymenthistoryfilterPipePipe implements PipeTransform {
   transform(

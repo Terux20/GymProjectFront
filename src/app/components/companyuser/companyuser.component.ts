@@ -4,9 +4,10 @@ import { CompanyUserService } from '../../services/company-user.service';
 import { ActivatedRoute } from '@angular/router';
 
 @Component({
-  selector: 'app-companyuser',
-  templateUrl: './companyuser.component.html',
-  styleUrl: './companyuser.component.css',
+    selector: 'app-companyuser',
+    templateUrl: './companyuser.component.html',
+    styleUrl: './companyuser.component.css',
+    standalone: false
 })
 export class CompanyuserComponent implements OnInit {
   companyUsers: CompanyUser[] = [];
