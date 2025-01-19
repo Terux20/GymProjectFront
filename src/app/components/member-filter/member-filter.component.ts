@@ -82,6 +82,8 @@ export class MemberFilterComponent implements OnInit, OnDestroy {
         if (response.success) {
           this.totalActiveMembers = response.data;
           this.activeMembersCount = response.data;
+
+        
         }
       },
       error: (error) => {
