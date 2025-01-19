@@ -5,7 +5,7 @@
 
   <div [class.content-blur]="isLoading">
     <!-- Toplam Ziyaretçi Kartı -->
-    <div class="card mb-4 bg-gradient-primary text-white">
+    <div class="card mb-4 bg-gradient-primary text-white" *ngIf="!isSearched">
       <div class="card-body text-center">
         <h5 class="card-title mb-0">Günlük Toplam Ziyaretçi</h5>
         <div class="display-4 font-weight-bold">{{ getTotalVisitorsToday() }}</div>
@@ -13,44 +13,8 @@
       </div>
     </div>
 
-    <!-- Üye İstatistikleri Kartı -->
-    <div class="card mb-4" *ngIf="selectedMember">
-      <div class="card-body">
-        <h5 class="card-title">{{ selectedMember.name }} - İstatistikler</h5>
-        <div class="row">
-          <div class="col-md-4">
-            <div class="stat-item">
-              <span class="stat-label">Aylık Ziyaret</span>
-              <span class="stat-value">{{ memberStats.monthlyVisits }}</span>
-            </div>
-          </div>
-          <div class="col-md-4">
-            <div class="stat-item">
-              <span class="stat-label">Ortalama Kalış</span>
-              <span class="stat-value">{{ memberStats.averageStayTime }} dk</span>
-            </div>
-          </div>
-          <div class="col-md-4">
-            <div class="stat-item">
-              <span class="stat-label">Son Ziyaret</span>
-              <span class="stat-value">{{ memberStats.lastVisit | date:'dd/MM/yyyy HH:mm' }}</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
+    <!-- Arama Filtreleri -->
     <div class="row mb-3">
-      <div class="col-md-6">
-        <label for="dateFilter" class="form-label">Tarih Seçin:</label>
-        <input
-          type="date"
-          id="dateFilter"
-          class="form-control"
-          [(ngModel)]="selectedDate"
-          (change)="onDateChange()"
-        />
-      </div>
       <div class="col-md-6">
         <label for="searchFilter" class="form-label">Üye Ara:</label>
         <div class="input-group">
@@ -61,14 +25,8 @@
             [formControl]="memberControl"
             placeholder="İsim veya telefon numarası ile arama yapın..."
           />
-          <mat-autocomplete
-            #auto="matAutocomplete"
-            [displayWith]="displayMember"
-          >
-            <mat-option
-              *ngFor="let member of filteredMembers | async"
-              [value]="member"
-            >
+          <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayMember">
+            <mat-option *ngFor="let member of filteredMembers | async" [value]="member">
               {{ member.name }} - {{ member.phoneNumber }}
             </mat-option>
           </mat-autocomplete>
@@ -82,8 +40,80 @@
           </div>
         </div>
       </div>
+      <div class="col-md-6" *ngIf="!isSearched">
+        <label for="dateFilter" class="form-label">Tarih Seçin:</label>
+        <input
+          type="date"
+          id="dateFilter"
+          class="form-control"
+          [(ngModel)]="selectedDate"
+          (change)="onDateChange()"
+        />
+      </div>
     </div>
 
+    <!-- İstatistik Kartları -->
+    <div class="card mb-4" *ngIf="selectedMember && isSearched">
+      <div class="card-body">
+        <h5 class="card-title mb-4">{{ selectedMember.name }} - Detaylı İstatistikler</h5>
+        <div class="row g-4">
+          <!-- Ziyaret İstatistikleri -->
+          <div class="col-md-4">
+            <div class="stat-card bg-primary text-white rounded p-3">
+              <div class="d-flex justify-content-between align-items-center">
+                <div>
+                  <h6 class="mb-0">Aylık Ziyaret</h6>
+                  <h2 class="mt-2 mb-0">{{ memberStats.monthlyVisits }}</h2>
+                </div>
+                <i class="fas fa-calendar fa-2x"></i>
+              </div>
+              <div class="mt-3">
+                <small>Haftalık Ortalama: {{ memberStats.averageVisitsPerWeek }}</small>
+              </div>
+            </div>
+          </div>
+
+          <!-- Süre İstatistikleri -->
+          <div class="col-md-4">
+            <div class="stat-card bg-success text-white rounded p-3">
+              <div class="d-flex justify-content-between align-items-center">
+                <div>
+                  <h6 class="mb-0">Ortalama Süre</h6>
+                  <h2 class="mt-2 mb-0">{{ memberStats.averageStayTime }} dk</h2>
+                </div>
+                <i class="fas fa-clock fa-2x"></i>
+              </div>
+              <div class="mt-3">
+                <small>Toplam: {{ memberStats.totalMonthlyDuration }} dk</small>
+              </div>
+            </div>
+          </div>
+
+          <!-- Diğer İstatistikler -->
+          <div class="col-md-4">
+            <div class="stat-card bg-info text-white rounded p-3">
+              <div class="d-flex justify-content-between align-items-center">
+                <div>
+                  <h6 class="mb-0">En Sık Ziyaret</h6>
+                  <h2 class="mt-2 mb-0">{{ memberStats.mostFrequentDay }}</h2>
+                </div>
+                <i class="fas fa-star fa-2x"></i>
+              </div>
+              <div class="mt-3">
+                <small>Son Ziyaret: {{ memberStats.lastVisit | date:'dd/MM/yyyy HH:mm' }}</small>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Grafik Bölümü -->
+        <div class="mt-4">
+          <app-visit-stats [data]="chartData"></app-visit-stats>
+        </div>
+      </div>
+    </div>
+
+    <!-- Giriş/Çıkış Tablosu -->
     <div class="table-responsive">
       <table class="table table-striped">
         <thead>
@@ -109,15 +139,14 @@
               <span *ngIf="shouldShowQRWarning(entry)" class="text-danger">
                 QR Okutulmadı
               </span>
-              <span *ngIf="!entry.exitTime" class="text-success">-</span>
+              <span *ngIf="!entry.exitTime" class="badge bg-success">-</span>
             </td>
             <td>
               {{ entry.exitTime ? calculateDuration(entry.entryTime, entry.exitTime) : '-' }}
             </td>
-           
           </tr>
           <tr *ngIf="entries.length === 0">
-            <td colspan="7" class="text-center">Kayıt bulunamadı</td>
+            <td colspan="6" class="text-center">Kayıt bulunamadı</td>
           </tr>
         </tbody>
       </table>

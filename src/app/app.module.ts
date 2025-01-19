@@ -76,7 +76,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { TransactionPaymentDialogComponent } from './components/transaction-payment-dialog/transaction-payment-dialog.component';
 import { DebtPaymentDialogComponent } from './components/debt-payment-dialog/debt-payment-dialog.component';
 import { QRCodeComponent } from 'angularx-qrcode';
-
+import { VisitStatsComponent } from './components/visit-stats/visit-stats.component';
 registerLocaleData(localeTr);
 
 @NgModule({
@@ -128,7 +128,7 @@ registerLocaleData(localeTr);
     OperationClaimComponent,
     UserOperationClaimComponent,
     TransactionPaymentDialogComponent,
-    DebtPaymentDialogComponent
+    DebtPaymentDialogComponent,
   ],
   imports: [
     BrowserModule,
@@ -137,7 +137,7 @@ registerLocaleData(localeTr);
     ReactiveFormsModule,
     AutoCompleteModule,
     ToastrModule.forRoot({
-      positionClass: 'toast-bottom-right',
+        positionClass: 'toast-bottom-right',
     }),
     BrowserAnimationsModule,
     MatFormFieldModule,
@@ -154,8 +154,9 @@ registerLocaleData(localeTr);
     MatNativeDateModule,
     MatIconModule,
     NgxPaginationModule,
-    QRCodeComponent
-  ],
+    QRCodeComponent,
+    VisitStatsComponent
+],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
     provideHttpClient(withInterceptorsFromDi(), withFetch()),

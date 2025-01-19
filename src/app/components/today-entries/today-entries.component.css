@@ -2,25 +2,13 @@
   background: linear-gradient(45deg, #4e73df 10%, #224abe 100%);
 }
 
-.stat-item {
-  text-align: center;
-  padding: 1rem;
-  border-radius: 8px;
-  background-color: #f8f9fa;
+.stat-card {
+  transition: transform 0.3s ease;
+  height: 100%;
 }
 
-.stat-label {
-  display: block;
-  color: #6c757d;
-  font-size: 0.875rem;
-  margin-bottom: 0.5rem;
-}
-
-.stat-value {
-  display: block;
-  font-size: 1.25rem;
-  font-weight: bold;
-  color: #2c3e50;
+.stat-card:hover {
+  transform: translateY(-5px);
 }
 
 .content-blur {
@@ -31,4 +19,95 @@
 .badge {
   padding: 0.5em 0.75em;
   font-size: 0.875em;
+}
+
+.stat-card i {
+  opacity: 0.8;
+}
+
+.table thead th {
+  background-color: #4a7299;
+  color: white;
+  font-weight: 500;
+}
+
+.table td {
+  vertical-align: middle;
+}
+
+.input-group .btn {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
+.card {
+  border: none;
+  box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+}
+
+.table-responsive {
+  box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+  background: white;
+  border-radius: 0.35rem;
+  padding: 1rem;
+}
+
+.form-control:focus {
+  border-color: #4e73df;
+  box-shadow: 0 0 0 0.2rem rgba(78, 115, 223, 0.25);
+}
+
+.stat-card small {
+  opacity: 0.8;
+}
+
+.bg-success {
+  background: linear-gradient(45deg, #1cc88a 10%, #13855c 100%) !important;
+}
+
+.bg-info {
+  background: linear-gradient(45deg, #36b9cc 10%, #258391 100%) !important;
+}
+
+.bg-primary {
+  background: linear-gradient(45deg, #4e73df 10%, #224abe 100%) !important;
+}
+
+.table-striped tbody tr:nth-of-type(odd) {
+  background-color: rgba(0, 0, 0, 0.02);
+}
+
+.table th, .table td {
+  padding: 1rem;
+}
+
+.badge.bg-success {
+  background-color: #1cc88a !important;
+}
+
+.text-danger {
+  color: #e74a3b !important;
+}
+
+.form-label {
+  font-weight: 500;
+  color: #5a5c69;
+}
+
+.input-group {
+  margin-bottom: 1rem;
+}
+
+@media (max-width: 768px) {
+  .stat-card {
+    margin-bottom: 1rem;
+  }
+  
+  .table-responsive {
+    padding: 0.5rem;
+  }
+  
+  .card-body {
+    padding: 1rem;
+  }
 }
