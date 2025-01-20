@@ -31,12 +31,12 @@ import { UserOperationClaimComponent } from './components/user-operation-claim/u
 
 const routes: Routes = [
   { path: "", component: LoginComponent, canActivate: [antiLoginGuard]},
+  // { path: "memberentryexithistory", component: MemberentryexithistoryComponent, canActivate: [LoginGuard, roleGuard], data: { expectedRole: ['owner','admin'] }},
   { path: "companyuserdetails", component: CompanyUserDetailsComponent, canActivate: [LoginGuard, roleGuard], data: { expectedRole: 'owner' }},
   { path: "companyuser", component: CompanyuserComponent, canActivate: [LoginGuard, roleGuard], data: { expectedRole: 'owner' }},
   { path: "companyuser/getcompanyuserdetailsbycityid/:cityID", component: CompanyUserDetailsComponent, canActivate: [LoginGuard, roleGuard], data: { expectedRole: 'owner' }},
   { path: "allmembers", component: MemberComponent, canActivate: [LoginGuard, roleGuard], data: { expectedRole: ['owner','admin'] }},
   { path: "memberremainingday", component: MemberRemainingDayComponent, canActivate: [LoginGuard, roleGuard], data: { expectedRole: ['owner','admin'] }},
-  { path: "memberentryexithistory", component: MemberentryexithistoryComponent, canActivate: [LoginGuard, roleGuard], data: { expectedRole: ['owner','admin'] }},
   { path: "memberfilter", component: MemberFilterComponent, canActivate: [LoginGuard, roleGuard], data: { expectedRole: ['owner','admin'] }},
   { path: "paymenthistory", component: PaymentHistoryComponent, canActivate: [LoginGuard, roleGuard], data: { expectedRole: ['owner','admin'] }},
   { path: "company/add", component: CompanyAddComponent, canActivate: [LoginGuard, roleGuard], data: { expectedRole: 'owner' }},

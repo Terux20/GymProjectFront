@@ -5,4 +5,5 @@ export interface MemberEntry {
   phoneNumber: string;
   entryTime: Date;
   exitTime?: Date;
+  remainingDays:number;
 }

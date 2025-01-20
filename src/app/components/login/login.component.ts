@@ -40,7 +40,7 @@ export class LoginComponent implements OnInit {
           this.toastrService.info(response.message);
           localStorage.setItem('token', response.data.token);
 
-          this.router.navigate(['/memberentryexithistory']); 
+          this.router.navigate(['/todayentries']); 
 
         },
         (responseError) => {

@@ -7,7 +7,7 @@ export const antiLoginGuard: CanActivateFn = (route, state) => {
   const router = inject(Router);
 
   if (authService.isAuthenticated()) {
-    router.navigate(['/memberentryexithistory']); 
+    router.navigate(['/todayentries']); 
     return false;
   }
   return true;

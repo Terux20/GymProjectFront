@@ -1,5 +1,9 @@
 <div class="container mt-4">
-  <div *ngIf="isLoading" class="d-flex justify-content-center align-items-center" style="height: 100vh;">
+  <div
+    *ngIf="isLoading"
+    class="d-flex justify-content-center align-items-center"
+    style="height: 100vh"
+  >
     <app-loading-spinner></app-loading-spinner>
   </div>
 
@@ -8,7 +12,9 @@
     <div class="card mb-4 bg-gradient-primary text-white" *ngIf="!isSearched">
       <div class="card-body text-center">
         <h5 class="card-title mb-0">Günlük Toplam Ziyaretçi</h5>
-        <div class="display-4 font-weight-bold">{{ getTotalVisitorsToday() }}</div>
+        <div class="display-4 font-weight-bold">
+          {{ getTotalVisitorsToday() }}
+        </div>
         <p class="mb-0">{{ selectedDate | date : "dd/MM/yyyy" }}</p>
       </div>
     </div>
@@ -25,16 +31,31 @@
             [formControl]="memberControl"
             placeholder="İsim veya telefon numarası ile arama yapın..."
           />
-          <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayMember">
-            <mat-option *ngFor="let member of filteredMembers | async" [value]="member">
+          <mat-autocomplete
+            #auto="matAutocomplete"
+            [displayWith]="displayMember"
+          >
+            <mat-option
+              *ngFor="let member of filteredMembers | async"
+              [value]="member"
+            >
               {{ member.name }} - {{ member.phoneNumber }}
             </mat-option>
           </mat-autocomplete>
           <div class="input-group-append">
-            <button class="btn btn-primary" type="button" (click)="searchMember()">
+            <button
+              class="btn btn-primary"
+              type="button"
+              (click)="searchMember()"
+            >
               <i class="fas fa-search"></i> Ara
             </button>
-            <button class="btn btn-outline-secondary" type="button" *ngIf="memberControl.value" (click)="clearSearch()">
+            <button
+              class="btn btn-outline-secondary"
+              type="button"
+              *ngIf="memberControl.value"
+              (click)="clearSearch()"
+            >
               <i class="fas fa-times"></i> Temizle
             </button>
           </div>
@@ -55,7 +76,9 @@
     <!-- İstatistik Kartları -->
     <div class="card mb-4" *ngIf="selectedMember && isSearched">
       <div class="card-body">
-        <h5 class="card-title mb-4">{{ selectedMember.name }} - Detaylı İstatistikler</h5>
+        <h5 class="card-title mb-4">
+          {{ selectedMember.name }} - Detaylı İstatistikler
+        </h5>
         <div class="row g-4">
           <!-- Ziyaret İstatistikleri -->
           <div class="col-md-4">
@@ -68,7 +91,10 @@
                 <i class="fas fa-calendar fa-2x"></i>
               </div>
               <div class="mt-3">
-                <small>Haftalık Ortalama: {{ memberStats.averageVisitsPerWeek }}</small>
+                <small
+                  >Haftalık Ortalama:
+                  {{ memberStats.averageVisitsPerWeek }}</small
+                >
               </div>
             </div>
           </div>
@@ -79,7 +105,9 @@
               <div class="d-flex justify-content-between align-items-center">
                 <div>
                   <h6 class="mb-0">Ortalama Süre</h6>
-                  <h2 class="mt-2 mb-0">{{ memberStats.averageStayTime }} dk</h2>
+                  <h2 class="mt-2 mb-0">
+                    {{ memberStats.averageStayTime }} dk
+                  </h2>
                 </div>
                 <i class="fas fa-clock fa-2x"></i>
               </div>
@@ -100,16 +128,19 @@
                 <i class="fas fa-star fa-2x"></i>
               </div>
               <div class="mt-3">
-                <small>Son Ziyaret: {{ memberStats.lastVisit | date:'dd/MM/yyyy HH:mm' }}</small>
+                <small
+                  >Son Ziyaret:
+                  {{ memberStats.lastVisit | date : "dd/MM/yyyy HH:mm" }}</small
+                >
               </div>
             </div>
           </div>
         </div>
 
         <!-- Grafik Bölümü -->
-        <div class="mt-4">
+        <!-- <div class="mt-4">
           <app-visit-stats [data]="chartData"></app-visit-stats>
-        </div>
+        </div> -->
       </div>
     </div>
 
@@ -128,13 +159,25 @@
         </thead>
         <tbody>
           <tr *ngFor="let entry of entries">
-            <td>{{ entry.name }}</td>
+            <td>
+              {{ entry.name }}
+              <span
+                class="ms-1 badge"
+                *ngIf="!isSearched"
+                [ngClass]="{
+                  'bg-danger': entry.remainingDays <= 7,
+                  'bg-success': entry.remainingDays > 8
+                }"
+              >
+                {{ entry.remainingDays }} Gün
+              </span>
+            </td>
             <td>{{ entry.phoneNumber }}</td>
-            <td>{{ entry.entryTime | date:'dd/MM/yyyy' }}</td>
-            <td>{{ entry.entryTime | date:'HH:mm:ss' }}</td>
+            <td>{{ entry.entryTime | date : "dd/MM/yyyy" }}</td>
+            <td>{{ entry.entryTime | date : "HH:mm:ss" }}</td>
             <td>
               <span *ngIf="entry.exitTime && !shouldShowQRWarning(entry)">
-                {{ entry.exitTime | date:'HH:mm:ss' }}
+                {{ entry.exitTime | date : "HH:mm:ss" }}
               </span>
               <span *ngIf="shouldShowQRWarning(entry)" class="text-danger">
                 QR Okutulmadı
@@ -142,7 +185,11 @@
               <span *ngIf="!entry.exitTime" class="badge bg-success">-</span>
             </td>
             <td>
-              {{ entry.exitTime ? calculateDuration(entry.entryTime, entry.exitTime) : '-' }}
+              {{
+                entry.exitTime
+                  ? calculateDuration(entry.entryTime, entry.exitTime)
+                  : "-"
+              }}
             </td>
           </tr>
           <tr *ngIf="entries.length === 0">
