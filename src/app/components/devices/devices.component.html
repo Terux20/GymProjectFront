@@ -1,0 +1,50 @@
+<!-- components/devices/devices.component.html -->
+<div class="container mt-4">
+    <div class="card">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <h3>Aktif Cihazlarım</h3>
+        <button class="btn btn-danger" (click)="revokeAllDevices()">
+          Tüm Oturumları Sonlandır
+        </button>
+      </div>
+      <div class="card-body">
+        <div *ngIf="isLoading" class="text-center">
+          <div class="spinner-border" role="status">
+            <span class="visually-hidden">Yükleniyor...</span>
+          </div>
+        </div>
+  
+        <div *ngIf="!isLoading">
+          <div class="table-responsive">
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th>Cihaz Bilgisi</th>
+                  <th>Son IP Adresi</th>
+                  <th>İlk Giriş</th>
+                  <th>Son Kullanım</th>
+                  <th>İşlemler</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let device of devices">
+                  <td>{{ device.deviceInfo }}</td>
+                  <td>{{ device.lastIpAddress }}</td>
+                  <td>{{ device.createdAt | date:'medium' }}</td>
+                  <td>{{ device.lastUsedAt | date:'medium' }}</td>
+                  <td>
+                    <button class="btn btn-danger btn-sm" (click)="revokeDevice(device.id)">
+                      Oturumu Sonlandır
+                    </button>
+                  </td>
+                </tr>
+                <tr *ngIf="devices.length === 0">
+                  <td colspan="5" class="text-center">Aktif cihaz bulunamadı.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>

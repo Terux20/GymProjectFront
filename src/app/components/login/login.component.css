@@ -1,95 +1,159 @@
-@import url(https://fonts.googleapis.com/css?family=Poppins:300);
-
-body {
-  background: linear-gradient(90deg, rgb(255, 255, 255) 0%, rgb(255, 255, 255) 50%);
-  font-family: "Poppins";    
+.login-container {
+  height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
-  margin: 0;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
 }
 
 .login-box {
-  position: relative;
-  background: #FFFFFF;
-  max-width: 360px;
-  padding: 45px;
+  background: white;
+  padding: 40px;
+  border-radius: 10px;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+  width: 100%;
+  max-width: 400px;
+}
+
+.login-header {
   text-align: center;
-  box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.2), 0 5px 5px 0 rgba(0, 0, 0, 0.24);
-  border-radius: 15px;
+  margin-bottom: 40px;
 }
 
-.login-box h2 {
-  margin: 0 0 30px;
-  color: #3324be;
+.login-header h2 {
+  color: #333;
+  font-size: 24px;
+  margin-bottom: 10px;
 }
 
-.user-box {
+.login-header p {
+  color: #666;
+  font-size: 16px;
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.form-group {
   position: relative;
-  margin-bottom: 30px;
 }
 
-.user-box input {
-  outline: 0;
-  background: #f2f2f2;
-  width: 100%;
-  border: 0;
-  padding: 15px;
-  box-sizing: border-box;
-  font-size: 14px;
-  border-radius: 15px;
+.input-group {
+  position: relative;
+  display: flex;
+  align-items: center;
 }
 
-.user-box label {
+.input-group i {
   position: absolute;
-  top: 15px;
   left: 15px;
-  color: #b3b3b3;
-  font-size: 14px;
-  transition: all 0.3s ease;
-  pointer-events: none;
+  color: #666;
 }
 
-.user-box input:focus ~ label,
-.user-box label.active {
-  top: -20px;
-  left: 0;
-  color: #3324be;
-  font-size: 12px;
-}
-
-.login-box a {
-  text-transform: uppercase;
-  display: inline-block;
-  background: #3324be;
+.form-group input {
   width: 100%;
-  border: 0;
-  padding: 15px;
-  color: #FFFFFF;
-  font-size: 14px;
-  border-radius: 15px;
+  padding: 15px 15px 15px 45px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-size: 16px;
   transition: all 0.3s ease;
-  cursor: pointer;
-  text-decoration: none;
 }
 
-.login-box a:hover {
-  background: #2957d6;
+.form-group input:focus {
+  border-color: #667eea;
+  box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.2);
+  outline: none;
 }
 
-.login-box .message {
-  margin: 15px 0 0;
-  color: #b3b3b3;
+.form-group input.is-invalid {
+  border-color: #dc3545;
+}
+
+.error-message {
+  color: #dc3545;
   font-size: 12px;
+  margin-top: 5px;
 }
 
-.login-box .message a {
-  color: #3324be;
-  text-decoration: none;
-  background: none;
-  width: auto;
-  padding: 0;
-  display: inline;
-  text-transform: none;
+.login-button {
+  background: #667eea;
+  color: white;
+  padding: 15px;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.login-button:hover {
+  background: #5a6fd6;
+}
+
+.login-button:disabled {
+  background: #cccccc;
+  cursor: not-allowed;
+}
+
+/* Loading Spinner */
+.spinner {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 4px;
+}
+
+.spinner > div {
+  width: 8px;
+  height: 8px;
+  background-color: white;
+  border-radius: 100%;
+  display: inline-block;
+  animation: bounce 1.4s infinite ease-in-out both;
+}
+
+.spinner .bounce1 {
+  animation-delay: -0.32s;
+}
+
+.spinner .bounce2 {
+  animation-delay: -0.16s;
+}
+
+@keyframes bounce {
+  0%, 80%, 100% { 
+      transform: scale(0);
+  } 
+  40% { 
+      transform: scale(1.0);
+  }
+}
+
+/* Responsive Tasarım */
+@media (max-width: 480px) {
+  .login-box {
+      margin: 20px;
+      padding: 20px;
+  }
+
+  .login-header h2 {
+      font-size: 20px;
+  }
+
+  .login-header p {
+      font-size: 14px;
+  }
+
+  .form-group input {
+      font-size: 14px;
+      padding: 12px 12px 12px 40px;
+  }
+
+  .login-button {
+      font-size: 14px;
+      padding: 12px;
+  }
 }

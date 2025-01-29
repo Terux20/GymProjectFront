@@ -77,6 +77,7 @@ import { TransactionPaymentDialogComponent } from './components/transaction-paym
 import { DebtPaymentDialogComponent } from './components/debt-payment-dialog/debt-payment-dialog.component';
 import { QRCodeComponent } from 'angularx-qrcode';
 import { VisitStatsComponent } from './components/visit-stats/visit-stats.component';
+import { DevicesComponent } from './components/devices/devices.component';
 registerLocaleData(localeTr);
 
 @NgModule({
@@ -129,6 +130,7 @@ registerLocaleData(localeTr);
     UserOperationClaimComponent,
     TransactionPaymentDialogComponent,
     DebtPaymentDialogComponent,
+    DevicesComponent,
   ],
   imports: [
     BrowserModule,

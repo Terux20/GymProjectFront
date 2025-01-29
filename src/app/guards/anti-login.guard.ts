@@ -10,5 +10,25 @@ export const antiLoginGuard: CanActivateFn = (route, state) => {
     router.navigate(['/todayentries']); 
     return false;
   }
+
+  // Token kontrolü yap
+  const token = localStorage.getItem('token');
+  const refreshToken = localStorage.getItem('refreshToken');
+  
+  if (token && refreshToken) {
+    // Token varsa ve auth service'de doğrulanırsa login'e erişimi engelle
+    authService.refreshToken().subscribe({
+      next: () => {
+        router.navigate(['/todayentries']);
+        return false;
+      },
+      error: () => {
+        // Token yenileme başarısız olursa login'e izin ver
+        return true;
+      }
+    });
+    return false;
+  }
+  
   return true;
 };

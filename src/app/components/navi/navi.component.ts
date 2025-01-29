@@ -19,12 +19,12 @@ export class NaviComponent implements OnInit {
     this.isAdmin = this.authService.hasRole('admin');
   }
 
-  logout() {
+  logout(event: Event) {
+    event.preventDefault(); 
     this.authService.logout();
-    this.router.navigate(['/login']);
-  }
+}
 
-  isAuthenticated(): boolean {
+isAuthenticated(): boolean {
     return this.authService.isAuthenticated();
-  }
+}
 }

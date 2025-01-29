@@ -17,7 +17,7 @@
 
     <div class="collapse navbar-collapse" id="navbarScroll">
       <ul class="navbar-nav ms-auto my-2 my-lg-0 navbar-nav-scroll">
-        <li class="nav-item dropdown" *ngIf="isAuthenticated()">
+        <li class="nav-item dropdown" *ngIf="isAuthenticated() && isAdmin">
           <a
             class="nav-link dropdown-toggle"
             href="#"
@@ -55,7 +55,8 @@
             </li>
             <li>
               <a class="dropdown-item" routerLink="todayentries">
-                <i class="fas fa-hourglass-end me-2"></i>Salona Giriş-Çıkış Kayıtları
+                <i class="fas fa-hourglass-end me-2"></i>Salona Giriş-Çıkış
+                Kayıtları
               </a>
             </li>
             <li>
@@ -86,7 +87,7 @@
           </ul>
         </li>
 
-        <li class="nav-item dropdown" *ngIf="isAuthenticated()">
+        <li class="nav-item dropdown" *ngIf="isAuthenticated() && isAdmin">
           <a
             class="nav-link dropdown-toggle"
             href="#"
@@ -101,26 +102,26 @@
             class="dropdown-menu dropdown-menu-end"
             aria-labelledby="customerDropdown"
           >
-          <li>
-            <a class="dropdown-item" routerLink="memberbalancetopup">
-              <i class="fas fa-clock me-2"></i>Bakiye Yükle - Düşür
-            </a>
-          </li>
-          <li>
-            <a class="dropdown-item" routerLink="products">
-              <i class="fas fa-clock me-2"></i>Ürün Ekle
-            </a>
-          </li>
-          <li>
-            <a class="dropdown-item" routerLink="product-sale">
-              <i class="fas fa-clock me-2"></i>Ürün Sat
-            </a>
-          </li>
-          <li>
-            <a class="dropdown-item" routerLink="transactions">
-              <i class="fas fa-clock me-2"></i>İşlem Takibi
-            </a>
-          </li>
+            <li>
+              <a class="dropdown-item" routerLink="memberbalancetopup">
+                <i class="fas fa-clock me-2"></i>Bakiye Yükle - Düşür
+              </a>
+            </li>
+            <li>
+              <a class="dropdown-item" routerLink="products">
+                <i class="fas fa-clock me-2"></i>Ürün Ekle
+              </a>
+            </li>
+            <li>
+              <a class="dropdown-item" routerLink="product-sale">
+                <i class="fas fa-clock me-2"></i>Ürün Sat
+              </a>
+            </li>
+            <li>
+              <a class="dropdown-item" routerLink="transactions">
+                <i class="fas fa-clock me-2"></i>İşlem Takibi
+              </a>
+            </li>
           </ul>
         </li>
 
@@ -169,15 +170,21 @@
               <a class="dropdown-item" routerLink="roles">
                 <i class="fas fa-link me-2"></i>Rol Ekle
               </a>
-            </li> <li>
+            </li>
+            <li>
               <a class="dropdown-item" routerLink="user-roles">
                 <i class="fas fa-link me-2"></i>Kullanıcı Rolleri
+              </a>
+            </li>
+            <li>
+              <a class="dropdown-item" routerLink="devices">
+                <i class="fas fa-mobile-alt me-2"></i>Aktif Cihazlarım
               </a>
             </li>
           </ul>
         </li>
         <li class="nav-item" *ngIf="isAuthenticated()">
-          <a class="nav-link" href="#" (click)="logout()">
+          <a class="nav-link" href="#"  (click)="logout($event)">
             <i class="fas fa-sign-out-alt me-1"></i> Çıkış Yap
           </a>
         </li>

@@ -166,7 +166,7 @@
                 *ngIf="!isSearched"
                 [ngClass]="{
                   'bg-danger': entry.remainingDays <= 7,
-                  'bg-success': entry.remainingDays > 8
+                  'bg-success': entry.remainingDays >= 8
                 }"
               >
                 {{ entry.remainingDays }} Gün

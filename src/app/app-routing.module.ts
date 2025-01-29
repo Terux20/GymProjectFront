@@ -28,10 +28,11 @@ import { MemberBalanceTopupComponent } from './components/member-balance-topup/m
 import { ProductSaleComponent } from './components/product-sale/product-sale.component';
 import { OperationClaimComponent } from './components/operation-claim/operation-claim.component';
 import { UserOperationClaimComponent } from './components/user-operation-claim/user-operation-claim.component';
+import { DevicesComponent } from './components/devices/devices.component';
 
 const routes: Routes = [
   { path: "", component: LoginComponent, canActivate: [antiLoginGuard]},
-  // { path: "memberentryexithistory", component: MemberentryexithistoryComponent, canActivate: [LoginGuard, roleGuard], data: { expectedRole: ['owner','admin'] }},
+  { path: 'devices',component: DevicesComponent,canActivate: [LoginGuard, roleGuard],data: { expectedRole: ['owner'] }},
   { path: "companyuserdetails", component: CompanyUserDetailsComponent, canActivate: [LoginGuard, roleGuard], data: { expectedRole: 'owner' }},
   { path: "companyuser", component: CompanyuserComponent, canActivate: [LoginGuard, roleGuard], data: { expectedRole: 'owner' }},
   { path: "companyuser/getcompanyuserdetailsbycityid/:cityID", component: CompanyUserDetailsComponent, canActivate: [LoginGuard, roleGuard], data: { expectedRole: 'owner' }},
