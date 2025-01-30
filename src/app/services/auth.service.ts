@@ -58,7 +58,6 @@ export class AuthService extends BaseApiService {
     }
   }
 
- 
   login(loginModel: LoginModel): Observable<TokenResponse> {
     const loginRequest = {
       loginDto: loginModel,
@@ -70,15 +69,14 @@ export class AuthService extends BaseApiService {
       .pipe(
         map((response) => {
           if (response.success && response.data) {
-            // User objesi ve token'ları kaydet
             const decodedToken = this.jwtHelper.decodeToken(response.data.token);
             this.currentUserSubject.next(new UserModel(decodedToken));
+            this.setSession(response.data);
             this.startRefreshTokenTimer();
           }
           return response;
         }),
         catchError((error) => {
-          // API'den gelen hata mesajını doğrudan ilet
           if (error.error && typeof error.error === 'object') {
             return throwError(() => error.error);
           }
@@ -89,7 +87,6 @@ export class AuthService extends BaseApiService {
         })
       );
   }
-
 
   refreshToken(): Observable<TokenResponse> {
     const refreshToken = localStorage.getItem('refreshToken');
@@ -163,7 +160,6 @@ export class AuthService extends BaseApiService {
         // Önce session'ı temizle ve yönlendirmeyi yap, sonra token'ı revoke et
         this.clearSession();
         this.router.navigate(['/login']).then(() => {
-            // Session temizlendikten ve yönlendirme yapıldıktan sonra token'ı revoke et
             this.httpClient
                 .post(
                     this.apiUrl + 'auth/logout',
@@ -178,16 +174,14 @@ export class AuthService extends BaseApiService {
         this.clearSession();
         this.router.navigate(['/login']);
     }
-}
+  }
 
-clearSession() {
+  clearSession() {
     localStorage.removeItem('token');
     localStorage.removeItem('refreshToken');
     this.currentUserSubject.next(null);
     this.stopRefreshTokenTimer();
-}
-
-
+  }
 
   getUserDevices(): Observable<UserDevice[]> {
     return this.httpClient.get<any>(this.apiUrl + 'auth/devices')
@@ -209,7 +203,6 @@ clearSession() {
     return this.httpClient.post(this.apiUrl + 'auth/revoke-all-devices', {});
   }
 
-  
   private setSession(tokenData: any) {
     if (tokenData && tokenData.token) {
       localStorage.setItem('token', tokenData.token);
