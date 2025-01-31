@@ -1,5 +1,3 @@
-// transaction-list.component.ts
-
 import { Component, OnInit } from '@angular/core';
 import { TransactionService } from '../../services/transaction.service';
 import { Transaction } from '../../models/transaction';
@@ -326,21 +324,21 @@ export class TransactionListComponent implements OnInit {
 
   getTotalAmount(): number {
     return this.filteredTransactions
-      .filter(t => t.transactionType !== 'Bakiye Yükleme')
-      .reduce((sum, t) => sum + t.amount, 0);
-  }
+        .filter(t => t.transactionType !== 'Bakiye Yükleme')
+        .reduce((sum, t) => sum + t.totalPrice, 0);
+}
 
-  getTotalUnpaidAmount(): number {
+getTotalUnpaidAmount(): number {
     return this.filteredTransactions
-      .filter(t => !t.isPaid && t.transactionType !== 'Bakiye Yükleme')
-      .reduce((sum, t) => sum + t.amount, 0);
-  }
+        .filter(t => !t.isPaid && t.transactionType !== 'Bakiye Yükleme')
+        .reduce((sum, t) => sum + t.amount, 0);  // Burada amount kullanıyoruz çünkü bu gerçek borç
+}
 
-  getTotalPaidAmount(): number {
+getTotalPaidAmount(): number {
     return this.filteredTransactions
-      .filter(t => t.isPaid && t.transactionType !== 'Bakiye Yükleme')
-      .reduce((sum, t) => sum + t.amount, 0);
-  }
+        .filter(t => t.isPaid && t.transactionType !== 'Bakiye Yükleme')
+        .reduce((sum, t) => sum + t.totalPrice, 0);
+}
 
   getCurrentMonthText(): string {
     if (!this.selectedMonth) return '';

@@ -11,4 +11,5 @@ export interface Transaction {
   quantity: number | string;
   isPaid: boolean;
   balance: number;
+  totalPrice: number;
 }
