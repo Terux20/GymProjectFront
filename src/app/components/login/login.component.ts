@@ -41,10 +41,10 @@ export class LoginComponent implements OnInit {
       this.toastrService.error('Lütfen tüm alanları doldurun');
       return;
     }
-
+  
     this.isLoading = true;
     const loginModel = Object.assign({}, this.loginForm.value);
-
+  
     this.authService.login(loginModel)
       .pipe(finalize(() => this.isLoading = false))
       .subscribe({
@@ -68,13 +68,11 @@ export class LoginComponent implements OnInit {
           }
         },
         error: (error) => {
-          if (error.error && error.error.message) {
-            this.toastrService.error(error.error.message);
-          } else {
-            this.toastrService.error('Bir hata oluştu');
-          }
+          // API'den gelen spesifik hata mesajını göster
+          this.toastrService.error(error.message);
           this.authService.clearSession();
         }
       });
   }
+  
 }

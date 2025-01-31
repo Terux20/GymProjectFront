@@ -62,7 +62,6 @@ export class MemberUpdateComponent {
       this.memberService.update(updatedMember).subscribe(
         (response: any) => {
           if (response.success) {
-            console.log(response.message);
             this.toastrService.success(response.message, 'Başarılı');
             this.dialogRef.close(true);
           } else {
@@ -70,7 +69,6 @@ export class MemberUpdateComponent {
           }
         },
         (responseError: any) => {
-          console.log(responseError);
           if (responseError.error.Errors && responseError.error.Errors.length > 0) {
             for (const error of responseError.error.Errors) {
               this.toastrService.error(error.ErrorMessage, 'Hata');

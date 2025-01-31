@@ -26,7 +26,6 @@ export class MemberRemainingDayComponent implements OnInit {
     this.isLoading = true;
     this.memberRemainingDayService.getMemberRemainingDays().subscribe(
       (response) => {
-        console.log(response.data);
         this.memberRemainingDays = response.data;
         this.memberRemainingDays.sort((a, b) => a.remainingDays - b.remainingDays);
         this.isLoading = false;
