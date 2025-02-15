@@ -7,6 +7,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MemberUpdateComponent } from '../crud/member-update/member-update.component';
 import { Subject } from 'rxjs';
 import { debounceTime, takeUntil } from 'rxjs/operators';
+import { DialogService } from '../../services/dialog.service';
 
 @Component({
     selector: 'app-member',
@@ -31,7 +32,8 @@ export class MemberComponent implements OnInit, OnDestroy {
   constructor(
     private memberService: MemberService,
     private toastrService: ToastrService,
-    public dialog: MatDialog
+    public dialog: MatDialog,
+    private dialogService: DialogService  
   ) {
     this.searchSubject.pipe(
       debounceTime(1000),
@@ -84,21 +86,23 @@ export class MemberComponent implements OnInit, OnDestroy {
   }
 
   onDelete(member: Member): void {
-    if (confirm(`${member.name} adlı üyeyi silmek istediğinizden emin misiniz?`)) {
-      this.memberService.delete(member.memberID).subscribe({
-        next: (response) => {
-          if (response.success) {
-            this.toastrService.success('Üye başarıyla silindi');
-            this.loadMembers();
+    this.dialogService.confirmMemberDelete(member.name, member).subscribe(result => {
+      if (result) {
+        this.memberService.delete(member.memberID).subscribe({
+          next: (response) => {
+            if (response.success) {
+              this.toastrService.success('Üye başarıyla silindi');
+              this.loadMembers();
+            }
+          },
+          error: (error) => {
+            this.toastrService.error('Üye silinirken bir hata oluştu');
           }
-        },
-        error: (error) => {
-          this.toastrService.error('Üye silinirken bir hata oluştu');
-        }
-      });
-    }
+        });
+      }
+    });
   }
-
+ 
   openUpdateDialog(member: Member): void {
     const dialogRef = this.dialog.open(MemberUpdateComponent, {
       maxWidth: '100vw',

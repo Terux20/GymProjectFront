@@ -29,6 +29,7 @@ import { ProductSaleComponent } from './components/product-sale/product-sale.com
 import { OperationClaimComponent } from './components/operation-claim/operation-claim.component';
 import { UserOperationClaimComponent } from './components/user-operation-claim/user-operation-claim.component';
 import { DevicesComponent } from './components/devices/devices.component';
+import { FrozenMembershipsComponent } from './components/frozen-memberships/frozen-memberships.component';
 
 const routes: Routes = [
   { path: "", component: LoginComponent, canActivate: [antiLoginGuard]},
@@ -37,6 +38,7 @@ const routes: Routes = [
   { path: "companyuser", component: CompanyuserComponent, canActivate: [LoginGuard, roleGuard], data: { expectedRole: 'owner' }},
   { path: "companyuser/getcompanyuserdetailsbycityid/:cityID", component: CompanyUserDetailsComponent, canActivate: [LoginGuard, roleGuard], data: { expectedRole: 'owner' }},
   { path: "allmembers", component: MemberComponent, canActivate: [LoginGuard, roleGuard], data: { expectedRole: ['owner','admin'] }},
+  { path: "frozen-memberships", component: FrozenMembershipsComponent, canActivate: [LoginGuard, roleGuard], data: { expectedRole: ['owner','admin'] }},
   { path: "memberremainingday", component: MemberRemainingDayComponent, canActivate: [LoginGuard, roleGuard], data: { expectedRole: ['owner','admin'] }},
   { path: "memberfilter", component: MemberFilterComponent, canActivate: [LoginGuard, roleGuard], data: { expectedRole: ['owner','admin'] }},
   { path: "paymenthistory", component: PaymentHistoryComponent, canActivate: [LoginGuard, roleGuard], data: { expectedRole: ['owner','admin'] }},

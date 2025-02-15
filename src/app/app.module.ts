@@ -78,6 +78,9 @@ import { DebtPaymentDialogComponent } from './components/debt-payment-dialog/deb
 import { QRCodeComponent } from 'angularx-qrcode';
 import { VisitStatsComponent } from './components/visit-stats/visit-stats.component';
 import { DevicesComponent } from './components/devices/devices.component';
+import { FreezeMembershipDialogComponent } from './components/freeze-membership-dialog/freeze-membership-dialog.component';
+import { FrozenMembershipsComponent } from './components/frozen-memberships/frozen-memberships.component';
+import { DialogService } from './services/dialog.service';
 registerLocaleData(localeTr);
 
 @NgModule({
@@ -131,6 +134,8 @@ registerLocaleData(localeTr);
     TransactionPaymentDialogComponent,
     DebtPaymentDialogComponent,
     DevicesComponent,
+    FreezeMembershipDialogComponent,
+    FrozenMembershipsComponent,
   ],
   imports: [
     BrowserModule,
@@ -160,6 +165,7 @@ registerLocaleData(localeTr);
     VisitStatsComponent
 ],
   providers: [
+    DialogService,
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
     provideHttpClient(withInterceptorsFromDi(), withFetch()),
     { provide: LOCALE_ID, useValue: 'tr-TR' },

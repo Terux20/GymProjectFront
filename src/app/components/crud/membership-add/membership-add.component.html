@@ -8,7 +8,7 @@
         <form [formGroup]="membershipAddForm">
           <div class="row">
             <div class="col-md-4 mb-3">
-              <label for="memberID">Ad - Telefon</label>
+              <label for="memberID">Ad - Telefon*</label>
               <div class="form-group">
                 <input
                   type="text"
@@ -27,7 +27,7 @@
             </div>
 
             <div class="col-md-4 mb-3">
-              <label for="membershipTypeID">Üyelik Türü</label>
+              <label for="membershipTypeID">Üyelik Türü*</label>
               <div class="form-group">
                 <input
                   type="text"
@@ -53,8 +53,8 @@
 
             <div class="col-md-4 mb-3">
               <div class="form-group">
-                <label>Başlangıç Tarihi</label>
-                <input type="date" class="form-control" formControlName="startDate">
+                <label>Başlangıç Tarihi*</label>
+                <input type="date" class="form-control" formControlName="startDate" required>
               </div>
               <div class="last-membership-info" *ngIf="lastMembershipInfo">
                 <small>{{ lastMembershipInfo }}</small>
@@ -68,8 +68,7 @@
                   id="day"
                   formControlName="day"
                   class="form-control"
-                  (input)="calculateEndDate()"
-                  required
+                  readonly
                 />
               </div>
             </div>
@@ -77,16 +76,16 @@
               <label for="price">Ücret</label>
               <div class="form-group">
                 <input
-                  type="text"
+                  type="number"
                   id="price"
                   formControlName="price"
                   class="form-control"
-                  required
+                  readonly
                 />
               </div>
             </div>
             <div class="col-md-4 mb-3">
-              <label for="PaymentMethod">Ödeme Türü</label>
+              <label for="PaymentMethod">Ödeme Türü*</label>
               <div class="form-group">
                 <select
                   id="PaymentMethod"
@@ -103,14 +102,14 @@
               </div>
             </div>
           </div>
-         
         </form>
       </div>
       <div class="card-footer">
-        <button class="btn btn-fill btn-primary" (click)="add()" [disabled]="isSubmitting">
+        <button 
+          class="btn btn-fill btn-primary" 
+          (click)="add()" 
+          [disabled]="!isFormValid() || isSubmitting">
           {{ isSubmitting ? 'Üyelik Ekleniyor...' : 'Ekle' }}
-
-
         </button>
       </div>
     </div>

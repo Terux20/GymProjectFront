@@ -33,8 +33,7 @@
           *ngFor="let membership of getFutureMemberships()"
           class="future-membership"
         >
-          {{ membership.branch }} üyeliğinizin başlamasına
-          {{ membership.remainingDays }} Gün vardır.
+          {{ membership.branch }} {{ message }}
         </div>
 
         <div

@@ -15,7 +15,6 @@
                 formControlName="name"
                 class="form-control"
                 placeholder="Ad Soyad"
-                
               />
             </div>
 
@@ -38,6 +37,7 @@
                 formControlName="gender"
                 class="form-select"
               >
+                <option value="">Seçiniz</option>
                 <option value="1">Erkek</option>
                 <option value="2">Kadın</option>
               </select>
@@ -82,18 +82,18 @@
         </form>
       </div>
       <div class="card-footer d-flex justify-content-between">
-        <!-- Butonu 'isSubmitting' değişkenine göre devre dışı bırakıyoruz -->
-        <button class="btn btn-fill btn-primary" (click)="add()" [disabled]="isSubmitting">
-        
+        <button 
+          class="btn btn-fill btn-primary" 
+          (click)="add()" 
+          [disabled]="!memberAddForm.valid || isSubmitting"
+        >
           {{ isSubmitting ? 'Üye Ekleniyor...' : 'Ekle' }}
-
         </button>
         <a
           *ngIf="isProcessCompleted"
           href="http://admin.gymkod.com/membership/add"
           class="btn btn-fill btn-success"
-          >Üyelik Tanımlama Paneli</a
-        >
+        >Üyelik Tanımlama Paneli</a>
       </div>
     </div>
   </div>

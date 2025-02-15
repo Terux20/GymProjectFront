@@ -1,0 +1,168 @@
+<div class="container mt-4">
+    <div *ngIf="isLoading" class="d-flex justify-content-center align-items-center">
+      <app-loading-spinner></app-loading-spinner>
+    </div>
+  
+    <div class="row" [class.content-blur]="isLoading">
+      <!-- Toggle Button -->
+      <div class="col-12 mb-3">
+        <button class="btn btn-primary toggle-button" (click)="toggleView()">
+          {{ showFrozenMemberships ? 'Dondurma İşlem Geçmişi' : 'Dondurulmuş Üyelikler' }}
+        </button>
+      </div>
+  
+      <!-- Aktif Dondurulmuş Üyelikler -->
+      <div class="col-12 mb-4" *ngIf="showFrozenMemberships">
+        <div class="card">
+          <div class="card-header">
+            <h5 class="card-title">Dondurulmuş Üyelikler</h5>
+          </div>
+          <div class="card-body">
+            <div class="table-responsive">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>Üye Adı</th>
+                    <th>Telefon</th>
+                    <th>Branş</th>
+                    <th>Dondurma Başlangıç</th>
+                    <th>Dondurma Bitiş</th>
+                    <th>Kalan Gün</th>
+                    <th>İşlemler</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let membership of frozenMemberships">
+                    <td>{{ membership.memberName }}</td>
+                    <td>{{ membership.phoneNumber }}</td>
+                    <td>{{ membership.branch }}</td>
+                    <td>{{ membership.freezeStartDate | date:'dd/MM/yyyy' }}</td>
+                    <td>{{ membership.freezeEndDate | date:'dd/MM/yyyy' }}</td>
+                    <td>{{ getRemainingDays(membership.freezeEndDate) }}</td>
+                    <td>
+                      <div class="btn-group">
+                        <button class="btn btn-danger btn-sm" 
+                                (click)="cancelFreeze(membership)"
+                                [disabled]="isProcessing"
+                                title="Dondurma işlemini tamamen iptal et">
+                          Geri Al
+                        </button>
+                        <button class="btn btn-warning btn-sm ms-2"
+                                (click)="reactivateFromToday(membership)"
+                                [disabled]="isProcessing"
+                                title="Bugünden itibaren üyeliği aktif et">
+                          Bugünden Başlat
+                        </button>
+                       
+                      </div>
+                    </td>
+                  </tr>
+                  <tr *ngIf="frozenMemberships.length === 0">
+                    <td colspan="7" class="text-center">Dondurulmuş üyelik bulunmamaktadır.</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+  
+     <!-- Geçmiş İşlemler -->
+<div class="col-12" *ngIf="!showFrozenMemberships">
+  <div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+      <h5 class="card-title">Dondurma İşlem Geçmişi</h5>
+      <div class="search-container">
+        <input
+          type="text"
+          class="form-control"
+          placeholder="İsimle ara..."
+          [(ngModel)]="searchText"
+          (input)="onSearchChange($event)"
+        />
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="table-responsive">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Üye Adı</th>
+              <th>Telefon</th>
+              <th>Branş</th>
+              <th>Dondurma Başlangıç</th>
+              <th>Dondurma Bitiş</th>
+              <th>Gerçek Bitiş</th>
+              <th>Dondurma Süresi</th>
+              <th>Kullanılan Süre</th>
+              <th>İşlem Türü</th>
+              <th>İşlem Tarihi</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let history of filteredHistories">
+              <td>{{ history.memberName }}</td>
+              <td>{{ history.phoneNumber }}</td>
+              <td>{{ history.branch }}</td>
+              <td>{{ formatDate(history.startDate) }}</td>
+              <td>{{ formatDate(history.plannedEndDate) }}</td>
+              <td>{{ history.actualEndDate ? formatDate(history.actualEndDate) : '-' }}</td>
+              <td>{{ history.freezeDays }} gün</td>
+              <td>{{ history.usedDays !== null ? history.usedDays + ' gün' : '-' }}</td>
+              <td>{{ history.cancellationType || '-' }}</td>
+              <td>{{ formatDate(history.creationDate) }}</td>
+            </tr>
+            <tr *ngIf="filteredHistories.length === 0">
+              <td colspan="10" class="text-center">
+                {{ searchText ? 'Arama sonucu bulunamadı.' : 'Dondurma geçmişi bulunmamaktadır.' }}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+  
+  <!-- Geçmiş Detay Modal -->
+  <div class="modal fade" [class.show]="showHistoryModal" [class.d-block]="showHistoryModal" 
+       tabindex="-1" role="dialog" [style.display]="showHistoryModal ? 'block' : 'none'">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Üye Dondurma Geçmişi</h5>
+          <button type="button" class="btn-close" (click)="closeHistoryModal()"></button>
+        </div>
+        <div class="modal-body">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Dondurma Başlangıç</th>
+                <th>Dondurma Bitiş</th>
+                <th>Gerçek Bitiş</th>
+                <th>Dondurma Süresi</th>
+                <th>Kullanılan Süre</th>
+                <th>İşlem Türü</th>
+                <th>İşlem Tarihi</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let history of getFilteredHistory()">
+                <td>{{ formatDate(history.startDate) }}</td>
+                <td>{{ formatDate(history.plannedEndDate) }}</td>
+                <td>{{ history.actualEndDate ? formatDate(history.actualEndDate) : '-' }}</td>
+                <td>{{ history.freezeDays }} gün</td>
+                <td>{{ history.usedDays !== null ? history.usedDays + ' gün' : '-' }}</td>
+                <td>{{ history.cancellationType || '-' }}</td>
+                <td>{{ formatDate(history.creationDate) }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" (click)="closeHistoryModal()">Kapat</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal-backdrop fade show" *ngIf="showHistoryModal"></div>

@@ -135,6 +135,14 @@
                         Sil
                         <fa-icon [icon]="faTrashAlt"></fa-icon>
                       </button>
+                      <button
+                        class="btn btn-sm btn-info ms-2"
+                        (click)="openFreezeDialog(member)"
+                        [disabled]="member.remainingDays <= 0"
+                      >
+                        Dondur
+                        <fa-icon [icon]="faSnowflake"></fa-icon>
+                      </button>
                     </div>
                   </td>
                 </tr>

@@ -4,12 +4,13 @@ import { MembershipType } from '../../models/membershipType';
 import { MembershipTypeService } from '../../services/membership-type.service';
 import { MatDialog } from '@angular/material/dialog';
 import { MembershipUpdateComponent } from '../crud/membership-update/membership-update.component';
-import { faEdit, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
+import { faEdit, faSnowflake, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
 import { MembershipService } from '../../services/membership.service';
 import { ToastrService } from 'ngx-toastr';
 import { MemberFilter } from '../../models/memberFilter';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { FreezeMembershipDialogComponent } from '../freeze-membership-dialog/freeze-membership-dialog.component';
 
 @Component({
     selector: 'app-member-filter',
@@ -27,6 +28,7 @@ export class MemberFilterComponent implements OnInit, OnDestroy {
   membershipTypes: MembershipType[] = [];
   faEdit = faEdit;
   faTrashAlt = faTrashAlt;
+  faSnowflake = faSnowflake;
   isLoading: boolean = false;
   currentPage = 1;
   totalPages = 0;
@@ -76,15 +78,39 @@ export class MemberFilterComponent implements OnInit, OnDestroy {
     this.loadMembers();
     this.getTotalActiveMembers();
   }
+  openFreezeDialog(member: MemberFilter): void {
+    const dialogRef = this.dialog.open(FreezeMembershipDialogComponent, {
+      width: '400px',
+      data: { 
+        memberName: member.name,
+        membershipID: member.membershipID
+      }
+    });
 
+    dialogRef.afterClosed().subscribe(freezeDays => {
+      if (freezeDays) {
+        this.membershipService.freezeMembership(member.membershipID, freezeDays).subscribe({
+          next: (response) => {
+            if (response.success) {
+              this.toastrService.success('Üyelik başarıyla donduruldu');
+              this.loadMembers();
+            } else {
+              this.toastrService.error(response.message);
+            }
+          },
+          error: (error) => {
+            this.toastrService.error('Üyelik dondurulurken bir hata oluştu');
+          }
+        });
+      }
+    });
+  }
   getTotalActiveMembers() {
     this.memberService.getTotalActiveMembers().subscribe({
       next: (response) => {
         if (response.success) {
           this.totalActiveMembers = response.data;
           this.activeMembersCount = response.data;
-
-        
         }
       },
       error: (error) => {
@@ -220,6 +246,7 @@ export class MemberFilterComponent implements OnInit, OnDestroy {
           if (response.success) {
             this.toastrService.success(response.message, 'Başarılı');
             this.loadMembers();
+            this.getTotalActiveMembers();
           } else {
             this.toastrService.error(response.message, 'Hata');
           }
