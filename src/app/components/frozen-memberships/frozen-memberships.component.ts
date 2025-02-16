@@ -3,12 +3,13 @@ import { MembershipService } from '../../services/membership.service';
 import { MembershipFreezeHistoryService } from '../../services/membership-freeze-history.service';
 import { ToastrService } from 'ngx-toastr';
 import { MembershipFreezeHistory } from '../../models/membershipFreezeHistory';
+import { DialogService } from '../../services/dialog.service';
 
 @Component({
   selector: 'app-frozen-memberships',
   templateUrl: './frozen-memberships.component.html',
   styleUrls: ['./frozen-memberships.component.css'],
-  standalone:false
+  standalone: false,
 })
 export class FrozenMembershipsComponent implements OnInit {
   frozenMemberships: any[] = [];
@@ -24,7 +25,8 @@ export class FrozenMembershipsComponent implements OnInit {
   constructor(
     private membershipService: MembershipService,
     private freezeHistoryService: MembershipFreezeHistoryService,
-    private toastr: ToastrService
+    private toastr: ToastrService,
+    private dialogService: DialogService
   ) {}
 
   ngOnInit(): void {
@@ -50,7 +52,7 @@ export class FrozenMembershipsComponent implements OnInit {
       error: (error) => {
         this.toastr.error('Dondurulmuş üyelikler yüklenirken bir hata oluştu.');
         this.isLoading = false;
-      }
+      },
     });
   }
 
@@ -67,7 +69,7 @@ export class FrozenMembershipsComponent implements OnInit {
       error: (error) => {
         this.toastr.error('Dondurma geçmişi yüklenirken bir hata oluştu.');
         this.isLoading = false;
-      }
+      },
     });
   }
 
@@ -76,7 +78,7 @@ export class FrozenMembershipsComponent implements OnInit {
       this.filteredHistories = this.freezeHistories;
     } else {
       const searchLower = searchText.toLowerCase().trim();
-      this.filteredHistories = this.freezeHistories.filter(history =>
+      this.filteredHistories = this.freezeHistories.filter((history) =>
         history.memberName.toLowerCase().includes(searchLower)
       );
     }
@@ -90,71 +92,78 @@ export class FrozenMembershipsComponent implements OnInit {
   getRemainingDays(endDate: string): number {
     const end = new Date(endDate);
     const now = new Date();
-    const diff = Math.ceil((end.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+    const diff = Math.ceil(
+      (end.getTime() - now.getTime()) / (1000 * 60 * 60 * 24)
+    );
     return Math.max(0, diff);
   }
 
   cancelFreeze(membership: any): void {
-    const message = 
-      `${membership.memberName} isimli üyenin dondurma işlemini tamamen iptal etmek istediğinizden emin misiniz?\n\n` +
-      `Bu işlem sonucunda üyelik hiç dondurulmamış gibi eski haline dönecektir.`;
-
-    if (confirm(message)) {
-      this.isProcessing = true;
-      this.membershipService.cancelFreeze(membership.membershipID).subscribe({
-        next: (response) => {
-          if (response.success) {
-            this.toastr.success('Üyelik dondurma işlemi tamamen iptal edildi.');
-            this.loadFrozenMemberships();
-            if (!this.showFrozenMemberships) {
-              this.loadFreezeHistories();
-            }
-          } else {
-            this.toastr.error(response.message);
-          }
-          this.isProcessing = false;
-        },
-        error: (error) => {
-          this.toastr.error('İşlem sırasında bir hata oluştu.');
-          this.isProcessing = false;
+    this.dialogService
+      .confirmFreezeCancel(membership.memberName, 0)
+      .subscribe((result) => {
+        if (result) {
+          this.isProcessing = true;
+          this.membershipService
+            .cancelFreeze(membership.membershipID)
+            .subscribe({
+              next: (response) => {
+                if (response.success) {
+                  this.toastr.success(
+                    'Üyelik dondurma işlemi tamamen iptal edildi.'
+                  );
+                  this.loadFrozenMemberships();
+                  if (!this.showFrozenMemberships) {
+                    this.loadFreezeHistories();
+                  }
+                } else {
+                  this.toastr.error(response.message);
+                }
+                this.isProcessing = false;
+              },
+              error: (error) => {
+                this.toastr.error('İşlem sırasında bir hata oluştu.');
+                this.isProcessing = false;
+              },
+            });
         }
       });
-    }
   }
 
   reactivateFromToday(membership: any): void {
     const usedDays = Math.floor(
       (new Date().getTime() - new Date(membership.freezeStartDate).getTime()) /
-      (1000 * 60 * 60 * 24)
+        (1000 * 60 * 60 * 24)
     );
-    const message =
-      `${membership.memberName} isimli üyenin üyeliğini bugünden itibaren aktif etmek istediğinizden emin misiniz?\n\n` +
-      `Kullanılan dondurma süresi: ${usedDays} gün\n` +
-      `Bu işlem sonucunda üyelik süresi buna göre ayarlanacaktır.`;
 
-    if (confirm(message)) {
-      this.isProcessing = true;
-      this.membershipService.reactivateFromToday(membership.membershipID).subscribe({
-        next: (response) => {
-          if (response.success) {
-            this.toastr.success('Üyelik bugünden itibaren aktif edildi.');
-            this.loadFrozenMemberships();
-            if (!this.showFrozenMemberships) {
-              this.loadFreezeHistories();
-            }
-          } else {
-            this.toastr.error(response.message);
-          }
-          this.isProcessing = false;
-        },
-        error: (error) => {
-          this.toastr.error('İşlem sırasında bir hata oluştu.');
-          this.isProcessing = false;
+    this.dialogService
+      .confirmReactivateFromToday(membership.memberName, usedDays)
+      .subscribe((result) => {
+        if (result) {
+          this.isProcessing = true;
+          this.membershipService
+            .reactivateFromToday(membership.membershipID)
+            .subscribe({
+              next: (response) => {
+                if (response.success) {
+                  this.toastr.success('Üyelik bugünden itibaren aktif edildi.');
+                  this.loadFrozenMemberships();
+                  if (!this.showFrozenMemberships) {
+                    this.loadFreezeHistories();
+                  }
+                } else {
+                  this.toastr.error(response.message);
+                }
+                this.isProcessing = false;
+              },
+              error: (error) => {
+                this.toastr.error('İşlem sırasında bir hata oluştu.');
+                this.isProcessing = false;
+              },
+            });
         }
       });
-    }
   }
-
   showHistory(membershipId: number): void {
     this.selectedMembershipId = membershipId;
     this.showHistoryModal = true;
@@ -168,9 +177,18 @@ export class FrozenMembershipsComponent implements OnInit {
   getFilteredHistory(): MembershipFreezeHistory[] {
     if (!this.selectedMembershipId) return [];
     return this.freezeHistories
-      .filter(h => h.memberName === this.frozenMemberships
-        .find(m => m.membershipID === this.selectedMembershipId)?.memberName)
-      .sort((a, b) => new Date(b.creationDate).getTime() - new Date(a.creationDate).getTime());
+      .filter(
+        (h) =>
+          h.memberName ===
+          this.frozenMemberships.find(
+            (m) => m.membershipID === this.selectedMembershipId
+          )?.memberName
+      )
+      .sort(
+        (a, b) =>
+          new Date(b.creationDate).getTime() -
+          new Date(a.creationDate).getTime()
+      );
   }
 
   formatDate(date: string | Date): string {

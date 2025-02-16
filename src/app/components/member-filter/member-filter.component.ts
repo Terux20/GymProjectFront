@@ -11,6 +11,7 @@ import { MemberFilter } from '../../models/memberFilter';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { FreezeMembershipDialogComponent } from '../freeze-membership-dialog/freeze-membership-dialog.component';
+import { DialogService } from '../../services/dialog.service';
 
 @Component({
     selector: 'app-member-filter',
@@ -47,7 +48,8 @@ export class MemberFilterComponent implements OnInit, OnDestroy {
     private membershipTypeService: MembershipTypeService,
     private membershipService: MembershipService,
     private dialog: MatDialog,
-    private toastrService: ToastrService
+    private toastrService: ToastrService,
+    private dialogService: DialogService 
   ) {
     this.searchTextSubject.pipe(
       debounceTime(1000),
@@ -234,28 +236,26 @@ export class MemberFilterComponent implements OnInit, OnDestroy {
   }
 
   deleteMember(member: MemberFilter) {
-    if (
-      confirm(
-        `${member.name} adlı üyenin üyeliğini silmek istediğinizden emin misiniz?`
-      )
-    ) {
-      this.isLoading = true;
-      this.membershipService.delete(member.membershipID).subscribe(
-        (response) => {
-          this.isLoading = false;
-          if (response.success) {
-            this.toastrService.success(response.message, 'Başarılı');
-            this.loadMembers();
-            this.getTotalActiveMembers();
-          } else {
-            this.toastrService.error(response.message, 'Hata');
+    this.dialogService.confirmMembershipDelete(member.name, member).subscribe(result => {
+      if (result) {
+        this.isLoading = true;
+        this.membershipService.delete(member.membershipID).subscribe(
+          (response) => {
+            this.isLoading = false;
+            if (response.success) {
+              this.toastrService.success(response.message, 'Başarılı');
+              this.loadMembers();
+              this.getTotalActiveMembers();
+            } else {
+              this.toastrService.error(response.message, 'Hata');
+            }
+          },
+          (error) => {
+            this.isLoading = false;
+            this.toastrService.error('Üye silinirken bir hata oluştu.', 'Hata');
           }
-        },
-        (error) => {
-          this.isLoading = false;
-          this.toastrService.error('Üye silinirken bir hata oluştu.', 'Hata');
-        }
-      );
-    }
+        );
+      }
+    });
   }
 }

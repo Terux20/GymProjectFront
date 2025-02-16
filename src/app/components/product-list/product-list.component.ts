@@ -6,6 +6,7 @@ import { ToastrService } from 'ngx-toastr';
 import { MatDialog } from '@angular/material/dialog';
 import { ProductUpdateComponent } from '../crud/product-update/product-update.component';
 import { faEdit, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
+import { DialogService } from '../../services/dialog.service';
 
 @Component({
     selector: 'app-product-list',
@@ -24,7 +25,9 @@ export class ProductListComponent implements OnInit {
     private productService: ProductService,
     private toastrService: ToastrService,
     private dialog: MatDialog,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private dialogService: DialogService
+
   ) {}
 
   ngOnInit(): void {
@@ -38,7 +41,23 @@ export class ProductListComponent implements OnInit {
       price: [0, [Validators.required, Validators.min(0)]],
     });
   }
-
+  deleteProduct(product: Product) {
+    this.dialogService.confirmProductDelete(product.name).subscribe(result => {
+      if (result) {
+        this.isLoading = true;
+        this.productService.deleteProduct(product.productID).subscribe(
+          response => {
+            this.toastrService.success('Ürün başarıyla silindi');
+            this.getProducts();
+          },
+          error => {
+            this.toastrService.error('Ürün silinirken bir hata oluştu');
+            this.isLoading = false;
+          }
+        );
+      }
+    });
+  }
   getProducts() {
     this.isLoading = true;
     this.productService.getProducts().subscribe(
@@ -72,19 +91,7 @@ export class ProductListComponent implements OnInit {
     }
   }
 
-  deleteProduct(product: Product) {
-    this.isLoading = true;
-    this.productService.deleteProduct(product.productID).subscribe(
-      response => {
-        this.toastrService.success(response.message, 'Başarılı');
-        this.getProducts();
-      },
-      responseError => {
-        this.toastrService.error(responseError.error.message, 'Hata');
-        this.isLoading = false;
-      }
-    );
-  }
+ 
 
   editProduct(product: Product) {
     const dialogRef = this.dialog.open(ProductUpdateComponent, {

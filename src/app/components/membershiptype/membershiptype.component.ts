@@ -7,6 +7,7 @@ import { ResponseModel } from '../../models/responseModel';
 import { ToastrService } from 'ngx-toastr';
 import { MembershiptypeUpdateComponent } from '../crud/membershiptype-update/membershiptype-update.component';
 import { faTrashAlt, faEdit } from '@fortawesome/free-solid-svg-icons';
+import { DialogService } from '../../services/dialog.service';
 
 @Component({
     selector: 'app-membershiptype',
@@ -22,7 +23,8 @@ export class MembershiptypeComponent implements OnInit {
   constructor(
     private membershipTypeService: MembershipTypeService,
     private toastrService: ToastrService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private dialogService: DialogService
   ) {}
 
   ngOnInit(): void {
@@ -34,7 +36,8 @@ export class MembershiptypeComponent implements OnInit {
       this.membershipTypes = response.data;
     });
   }
-
+  
+  
   openUpdateDialog(membershipType: MembershipType) {
     const dialogRef = this.dialog.open(MembershiptypeUpdateComponent, {
       maxWidth: '100vw',
@@ -49,23 +52,27 @@ export class MembershiptypeComponent implements OnInit {
     });
   }
 
-  deleteMembershipType(membershipType: MembershipType) {
-    this.membershipTypeService.delete(membershipType.membershipTypeID).subscribe(
-      (response: ResponseModel) => {
-        if (response.success) {
-          this.membershipTypes = this.membershipTypes.filter(
-            (m) => m.membershipTypeID !== membershipType.membershipTypeID
-          );
-          this.toastrService.success(response.message, 'Başarılı');
-        } else {
-          this.toastrService.error(response.message, 'Hata');
+deleteMembershipType(membershipType: MembershipType) {
+  this.dialogService.confirmMembershipTypeDelete(membershipType).subscribe(result => {
+    if (result) {
+      this.membershipTypeService.delete(membershipType.membershipTypeID).subscribe(
+        (response: ResponseModel) => {
+          if (response.success) {
+            this.membershipTypes = this.membershipTypes.filter(
+              (m) => m.membershipTypeID !== membershipType.membershipTypeID
+            );
+            this.toastrService.success(response.message, 'Başarılı');
+          } else {
+            this.toastrService.error(response.message, 'Hata');
+          }
+        },
+        (error) => {
+          this.toastrService.error('Üyelik Paketi Bir Üyeye Bağlı, Silinemez.', 'Hata');
         }
-      },
-      (error) => {
-        this.toastrService.error('Üyelik Paketi Bir Üyeye Bağlı, Silinemez.', 'Hata');
-      }
-    );
-  }
+      );
+    }
+  });
+}
 
   getDayDisplay(day: number): string {
     return (day === 30 || day === 31) ? '1 Ay' : `${day} Gün`;

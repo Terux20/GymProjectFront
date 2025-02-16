@@ -14,6 +14,7 @@ import {
 import { MemberService } from '../../services/member.service';
 import { Member } from '../../models/member';
 import { DebtPaymentService } from '../../services/debt-payment-service.service';
+import { DialogService } from '../../services/dialog.service';
 
 @Component({
     selector: 'app-payment-history',
@@ -50,7 +51,8 @@ export class PaymentHistoryComponent implements OnInit, OnDestroy {
     private paymentHistoryService: PaymentHistoryService,
     private memberService: MemberService,
     private debtPaymentService: DebtPaymentService,
-    private toastrService: ToastrService
+    private toastrService: ToastrService,
+    private dialogService: DialogService
   ) {
     this.setCurrentMonthDates();
   }
@@ -296,34 +298,43 @@ private calculateTotalsFromCurrentData() {
   }
 
   deletePayment(payment: PaymentHistory) {
-    if (confirm(`Bu ödeme kaydını silmek istediğinizden emin misiniz?`)) {
-      this.isLoading = true;
-
-      if (payment.paymentMethod.includes('Borç Ödemesi')) {
-        this.debtPaymentService.delete(payment.paymentID).subscribe({
-          next: (response) => {
-            this.toastrService.success('Borç ödemesi başarıyla silindi');
-            this.loadPayments();
-          },
-          error: (error) => {
-            this.toastrService.error('Borç ödemesi silinirken bir hata oluştu');
-            this.isLoading = false;
-          },
-        });
-      } else {
-        this.paymentHistoryService.delete(payment.paymentID).subscribe({
-          next: (response) => {
-            this.toastrService.success('Ödeme başarıyla silindi');
-            this.loadPayments();
-          },
-          error: (error) => {
-            this.toastrService.error('Ödeme silinirken bir hata oluştu');
-            this.isLoading = false;
-          },
-        });
+    const isDebtPayment = payment.paymentMethod.includes('Borç Ödemesi');
+    
+    this.dialogService.confirmPaymentDelete(
+      payment.name,
+      payment.paymentAmount,
+      isDebtPayment
+    ).subscribe(result => {
+      if (result) {
+        this.isLoading = true;
+  
+        if (isDebtPayment) {
+          this.debtPaymentService.delete(payment.paymentID).subscribe({
+            next: (response) => {
+              this.toastrService.success('Borç ödemesi başarıyla silindi');
+              this.loadPayments();
+            },
+            error: (error) => {
+              this.toastrService.error('Borç ödemesi silinirken bir hata oluştu');
+              this.isLoading = false;
+            },
+          });
+        } else {
+          this.paymentHistoryService.delete(payment.paymentID).subscribe({
+            next: (response) => {
+              this.toastrService.success('Ödeme başarıyla silindi');
+              this.loadPayments();
+            },
+            error: (error) => {
+              this.toastrService.error('Ödeme silinirken bir hata oluştu');
+              this.isLoading = false;
+            },
+          });
+        }
       }
-    }
+    });
   }
+  
 
   clearFilters() {
     this.memberSearchControl.reset();
